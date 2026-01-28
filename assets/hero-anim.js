@@ -90,4 +90,32 @@
   step();
 })();
 
+// CTA wave: smooth random colors
+(() => {
+  const el = document.querySelector('[data-cta-wave]');
+  if (!el) return;
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+  function hsl(h, s, l) { return `hsl(${Math.round(h)} ${Math.round(s)}% ${Math.round(l)}%)`; }
+
+  function pickColors() {
+    // яркие, но не кислотные
+    const h1 = rand(0, 360);
+    const h2 = (h1 + rand(60, 140)) % 360;
+    const h3 = (h1 + rand(160, 260)) % 360;
+    const s = rand(80, 95);
+    const l1 = rand(60, 72);
+    const l2 = rand(58, 70);
+    const l3 = rand(60, 74);
+
+    el.style.setProperty('--cta-c1', hsl(h1, s, l1));
+    el.style.setProperty('--cta-c2', hsl(h2, s, l2));
+    el.style.setProperty('--cta-c3', hsl(h3, s, l3));
+  }
+
+  // стартовые цвета + периодическая смена
+  pickColors();
+  setInterval(pickColors, 9000);
+})();
+
 

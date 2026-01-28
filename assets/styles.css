@@ -104,11 +104,11 @@ header {
 }
 
 .header-glass .navbar .menu a:hover {
-  color: #EDF95A !important;
+  color: #F97F5A !important;
 }
 
 .header-glass .navbar .menu a.active {
-  color: #EDF95A !important;
+  color: #F97F5A !important;
   font-weight: 700;
 }
 
@@ -127,7 +127,7 @@ header {
 
 .header-glass .header-link:hover {
   background: transparent !important;
-  color: #EDF95A !important;
+  color: #F97F5A !important;
   transform: none !important;
   box-shadow: none !important;
 }
@@ -139,7 +139,7 @@ header {
 }
 
 .header-glass .btn:hover {
-  background-color: #EDF95A !important;
+  background-color: #F97F5A !important;
   color: #000000 !important;
 }
 
@@ -155,7 +155,7 @@ header {
 
 .header-glass .dropdown-content a:hover {
   background-color: rgba(237, 249, 90, 0.2) !important;
-  color: #EDF95A !important;
+  color: #F97F5A !important;
 }
 
 [data-theme="dark"] .header-glass {
@@ -231,7 +231,7 @@ header {
   background-color: #F5F5F5 !important;
   transform: translateY(-5px) !important;
   box-shadow: none !important;
-  color: #A10000 !important;
+  color: #F97F5A !important;
   border-color: transparent !important;
 }
 .btn:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
@@ -259,6 +259,57 @@ header {
   transition: transform .22s ease;
 }
 
+/* CTA wave background (random colors via JS) */
+@property --cta-c1 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #EDF95A;
+}
+@property --cta-c2 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #F97F5A;
+}
+@property --cta-c3 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #9BF7FF;
+}
+
+.cta-wave{
+  background: linear-gradient(120deg, var(--cta-c1), var(--cta-c2), var(--cta-c3));
+  background-size: 240% 240%;
+  animation: ctaGradientShift 14s ease-in-out infinite;
+  transition: --cta-c1 3000ms ease, --cta-c2 3000ms ease, --cta-c3 3000ms ease;
+}
+.cta-wave::before{
+  content: "";
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side at 20% 30%, rgba(255,255,255,.35), transparent 60%),
+    radial-gradient(closest-side at 75% 25%, rgba(0,0,0,.10), transparent 55%),
+    radial-gradient(closest-side at 35% 80%, rgba(255,255,255,.28), transparent 60%),
+    radial-gradient(closest-side at 85% 75%, rgba(0,0,0,.08), transparent 55%);
+  filter: blur(28px);
+  opacity: .9;
+  mix-blend-mode: overlay;
+  transform: translate3d(0,0,0);
+  animation: ctaWaves 9s ease-in-out infinite;
+}
+
+@keyframes ctaGradientShift{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+@keyframes ctaWaves{
+  0%{ transform: translate(-6%, -2%) scale(1.05); }
+  50%{ transform: translate(6%, 2%) scale(1.08); }
+  100%{ transform: translate(-6%, -2%) scale(1.05); }
+}
+
 /* Services page: colorize "Подробнее" links on hover */
 .services-page a.link:hover { color: #E9282B !important; }
 
@@ -272,6 +323,7 @@ header {
 }
 .btn-arrow:hover::after { transform: translate(3px, -3px); }
 @media (prefers-reduced-motion: reduce) { .btn-arrow:hover::after { transform: none; } }
+
 
 /* Hero interactive canvas */
 .hero-interactive { position: relative; }

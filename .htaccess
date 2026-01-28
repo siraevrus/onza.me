@@ -1,0 +1,8 @@
+# Для Apache - перенаправление несуществующих файлов проектов
+RewriteEngine On
+
+# Если файл не существует и это похоже на проект, проверяем БД
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/(project-|opharme|sadfasdf) [NC]
+RewriteRule ^(.*)$ project_handler.php?file=$1 [L,QSA]
