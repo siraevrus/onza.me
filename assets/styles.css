@@ -13,7 +13,7 @@
 }
 .steps-grid article { position: relative; }
 .steps-grid article:last-child .step-arrow { display: none; }
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&family=Archivo+Black&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@100..900,0&display=swap');
 
 /* Modern UI enhancements: animated gradients, glass, soft shadows, hovers */
 
@@ -27,23 +27,36 @@
 
 /* Subtle page background */
 body {
-  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  background:
-    radial-gradient(1000px 600px at 100% -10%, rgba(99,102,241,.08), transparent 60%),
-    radial-gradient(800px 500px at -10% 10%, rgba(236,72,153,.06), transparent 60%),
-    linear-gradient(180deg, rgba(2,6,23,0) 0%, rgba(2,6,23,.02) 100%);
+  font-family: "Geologica", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0,
+    "CRSV" 0,
+    "SHRP" 0;
+  background: #F5F5F5;
 }
 
 h1, h2, h3 {
-  font-family: 'Manrope', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-family: "Geologica", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0,
+    "CRSV" 0,
+    "SHRP" 0;
 }
 
-/* Archivo Black for logo */
+/* Geologica for logo */
 .archivo-black-regular {
-  font-family: "Archivo Black", sans-serif;
-  font-weight: 400;
+  font-family: "Geologica", sans-serif;
+  font-weight: 700;
   font-style: normal;
+  font-optical-sizing: auto;
+  font-variation-settings:
+    "slnt" 0,
+    "CRSV" 0,
+    "SHRP" 0;
 }
 
 /* Brand color for text logo */
@@ -54,14 +67,99 @@ a.archivo-black-regular { color: #E9282B !important; }
 
 
 
-/* Sticky translucent header */
-.header-glass {
-  background: rgba(255,255,255,.65);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-          backdrop-filter: saturate(140%) blur(12px);
+/* Sticky header - черная плашка с закругленными краями */
+header {
+  padding: 0 !important;
+  border: none !important;
 }
+
+.header-glass {
+  background: #000000 !important;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 20px auto 0;
+  max-width: 69%;
+  padding: 0.8625rem 2rem;
+  width: 69%;
+}
+
+@media (max-width: 768px) {
+  .header-glass {
+    border-radius: 30px;
+    max-width: 90%;
+    margin-top: 20px;
+    padding: 0.575rem 1rem;
+    width: 90%;
+  }
+}
+
+.header-glass .navbar {
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+.header-glass .navbar a,
+.header-glass .navbar .menu a {
+  color: #ffffff !important;
+}
+
+.header-glass .navbar .menu a:hover {
+  color: #EDF95A !important;
+}
+
+.header-glass .navbar .menu a.active {
+  color: #EDF95A !important;
+  font-weight: 700;
+}
+
+.header-glass .logo-img {
+  filter: brightness(0) invert(1);
+}
+
+.header-glass .header-link {
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  padding: 0 !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.header-glass .header-link:hover {
+  background: transparent !important;
+  color: #EDF95A !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.header-glass .btn {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ffffff !important;
+}
+
+.header-glass .btn:hover {
+  background-color: #EDF95A !important;
+  color: #000000 !important;
+}
+
+.header-glass .dropdown-content {
+  background-color: #000000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+}
+
+.header-glass .dropdown-content a {
+  color: #ffffff !important;
+}
+
+.header-glass .dropdown-content a:hover {
+  background-color: rgba(237, 249, 90, 0.2) !important;
+  color: #EDF95A !important;
+}
+
 [data-theme="dark"] .header-glass {
-  background: rgba(17,24,39,.5);
+  background: #000000 !important;
 }
 
 /* Hero animated ambient gradient */
@@ -121,19 +219,19 @@ a.archivo-black-regular { color: #E9282B !important; }
 .btn-glow { transition: transform .2s ease, box-shadow .2s ease; }
 .btn-glow:hover { box-shadow: none !important; }
 
-/* Global button reset: square, black outline, white fill */
+/* Global button reset: rounded, black outline, F5F5F5 fill */
 .btn, .btn-primary, .btn-outline, .btn-ghost, .btn-accent, .btn-secondary {
-  border-radius: 0 !important;
-  background-color: #ffffff !important;
+  border-radius: 8px !important;
+  background-color: #F5F5F5 !important;
   color: #000000 !important;
   border: 1px solid #000000 !important;
   transition: transform .22s ease, background-color .22s ease !important;
 }
 .btn:hover, .btn-primary:hover, .btn-outline:hover, .btn-ghost:hover, .btn-accent:hover, .btn-secondary:hover {
-  background-color: #ffffff !important;
+  background-color: #F5F5F5 !important;
   transform: translateY(-5px) !important;
   box-shadow: none !important;
-  color: #E9282B !important;
+  color: #A10000 !important;
   border-color: transparent !important;
 }
 .btn:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
@@ -256,9 +354,9 @@ a.archivo-black-regular { color: #E9282B !important; }
 }
 
 /* Black & white section (About) */
-.bw-section { background: #ffffff; }
+.bw-section { background: #F5F5F5; }
 .bw-section h2, .bw-section h3, .bw-section p { color: #000000 !important; }
-.bw-section .card { background: #ffffff !important; border: 1px solid #000000; box-shadow: none; }
+.bw-section .card { background: #ffffff !important; border: none !important; box-shadow: none; }
 .bw-section .card .card-title { color: #000000; }
 .bw-section .project-img { filter: grayscale(1); }
 
@@ -287,5 +385,58 @@ a[href="blog.html"] { display: none !important; }
 .animated-list li:hover {
   transform: translateX(15px);
   color: #E9282B; /* Пример цвета, можно изменить на любой другой */
+}
+
+
+/* Remove background from hero services list */
+.hero .bg-base-100 {
+  background-color: transparent !important;
+}
+
+/* Override bg-white class to use #F5F5F5 */
+.bg-white {
+  background-color: #F5F5F5 !important;
+}
+
+/* Hero section background */
+.hero.bg-white {
+  background-color: #F5F5F5 !important;
+}
+
+/* Footer background */
+footer.bg-white {
+  background-color: #F5F5F5 !important;
+}
+
+/* CTA section background */
+section.bg-white {
+  background-color: #F5F5F5 !important;
+}
+
+/* Figure backgrounds in project cards - keep white for logo area */
+figure.bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Privacy page styles */
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.prose ul li {
+  color: #000000 !important;
+  margin-top: 0.25rem;
+}
+.prose a.link {
+  color: #000000 !important;
+  text-decoration: underline;
+  text-decoration-color: rgba(0,0,0,.5);
+  transition: color .2s ease, text-decoration-color .2s ease;
+}
+.prose a.link:hover {
+  color: #E9282B !important;
+  text-decoration-color: #E9282B;
 }
 
