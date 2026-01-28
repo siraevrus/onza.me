@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ru" data-theme="corporate">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IT Company — Услуги</title>
+    <meta name="description" content="Услуги: веб‑разработка, мобильные приложения, дизайн, аналитика, DevOps и поддержка." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <link href="assets/styles.css" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-grid services-page">
+        <header class="border-b border-base-200 sticky top-0 z-50 header-glass">
+      <div class="navbar container mx-auto px-4">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a href="index.html">Главная</a></li>
+              <li><a href="services.html">Услуги</a></li>
+              <li><a href="projects.html">Проекты</a></li>
+              <li><a href="contacts.html">Контакты</a></li>
+              <li><a href="vacancies.html">Вакансии</a></li>
+              <li><a href="blog.html">Блог</a></li>
+            </ul>
+          </div>
+          <a href="index.html" aria-label="ONZA.ME" class="flex items-center ml-5"><img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img" /></a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="services.html">Услуги</a></li>
+            <li><a href="projects.html">Проекты</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+            <li><a href="vacancies.html">Вакансии</a></li>
+            <li><a href="blog.html">Блог</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end">
+          <a href="contacts.html" class="btn btn-primary btn-arrow">Обсудить проект</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <section class="container mx-auto max-w-7xl px-4 py-12 bw-section">
+        <h1 class="text-4xl font-extrabold text-black">Услуги</h1>
+        <p class="mt-3 max-w-2xl">Гибко комбинируем работы, подбираем оптимальную команду под задачи и бюджет.</p>
+      </section>
+
+      <section class="bw-section">
+        <div class="container mx-auto max-w-7xl px-4 py-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="card card-zoom">
+            <div class="card-body">
+              <h2 class="card-title">Аналитика и консалтинг</h2>
+              <p>Аудит, CJM, бэклог, roadmap, оценка и планирование.</p>
+              <div class="mt-3"><a href="service-analytics.html" class="link link-hover">Подробнее ↗</a></div>
+            </div>
+          </div>
+          <div class="card card-zoom">
+            <div class="card-body">
+              <h2 class="card-title">UI/UX дизайн</h2>
+              <p>Исследования, прототипирование, дизайн‑системы.</p>
+              <div class="mt-3"><a href="service-design.html" class="link link-hover">Подробнее ↗</a></div>
+            </div>
+          </div>
+          <div class="card card-zoom">
+            <div class="card-body">
+              <h2 class="card-title">Веб‑разработка</h2>
+              <p>Frontend/Backend, интеграции, платежи, CRM/ERP.</p>
+              <div class="mt-3"><a href="service-backend.html" class="link link-hover">Подробнее ↗</a></div>
+            </div>
+          </div>
+          <div class="card card-zoom">
+            <div class="card-body">
+              <h2 class="card-title">Мобильная разработка</h2>
+              <p>Flutter/React Native и нативные iOS/Android.</p>
+              <div class="mt-3"><a href="service-mobile.html" class="link link-hover">Подробнее ↗</a></div>
+            </div>
+          </div>
+          <div class="card card-zoom">
+            <div class="card-body">
+              <h2 class="card-title">Тестирование и QA</h2>
+              <p>Автотесты, нагрузочное тестирование, аудит качества.</p>
+              <div class="mt-3"><a href="service-qa.html" class="link link-hover">Подробнее ↗</a></div>
+
+
+            </div>
+          </div>
+          <div class="card card-zoom">
+            <div class="card-body">
+              <h2 class="card-title">DevOps и поддержка</h2>
+              <p>CI/CD, инфраструктура, мониторинг, 24/7 SLA.</p>
+              <div class="mt-3"><a href="service-support.html" class="link link-hover">Подробнее ↗</a></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bw-section">
+        <div class="container mx-auto max-w-7xl px-4 py-12">
+          <div class="border border-black px-6 py-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold">Нужен быстрый старт?</h2>
+              <p class="mt-2">Зафиксируем MVP за 6–10 недель и начнём собирать метрики с первых пользователей.</p>
+            </div>
+            <a href="contacts.html" class="btn btn-primary btn-arrow">Запросить оценку</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-white">
+      <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">
+        <div>
+          <img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
+          <div class="mt-2">© Onza.me</div>
+          <div class="mt-1">Все права защищены</div>
+        </div>
+        <div>
+          <div class="font-semibold">Услуги</div>
+          <ul class="mt-2 space-y-1">
+            <li><a class="link link-hover" href="service-mobile.html">Мобильные приложения</a></li>
+            <li><a class="link link-hover" href="service-design.html">Дизайн интерфейсов</a></li>
+            <li><a class="link link-hover" href="service-backend.html">Backend‑разработка</a></li>
+            <li><a class="link link-hover" href="service-support.html">Техническая поддержка</a></li>
+            <li><a class="link link-hover" href="service-analytics.html">Аналитика и консалтинг</a></li>
+          </ul>
+        </div>
+        <div>
+          <div><a class="link link-hover" href="tel:+79805422655">8 9805422655</a></div>
+          <div class="mt-1"><a class="link link-hover" href="mailto:hello.me">hello.me</a></div>
+        </div>
+        <div>
+          <div class="font-semibold">Меню</div>
+          <ul class="mt-2 space-y-1">
+            <li><a class="link link-hover" href="index.html">Главная</a></li>
+            <li><a class="link link-hover" href="services.html">Услуги</a></li>
+            <li><a class="link link-hover" href="projects.html">Проекты</a></li>
+            <li><a class="link link-hover" href="contacts.html">Контакты</a></li>
+            <li><a class="link link-hover" href="vacancies.html">Вакансии</a></li>
+            <li><a class="link link-hover" href="blog.html">Блог</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

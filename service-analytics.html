@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ru" data-theme="corporate">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ONZA.ME — Аналитика и консалтинг</title>
+    <meta name="description" content="Аналитика и консалтинг: аудит продукта, CJM, бэклог, roadmap, оценка и планирование." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <link href="assets/styles.css" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-grid">
+    <!-- Header -->
+        <header class="border-b border-base-200 sticky top-0 z-50 header-glass">
+      <div class="navbar container mx-auto px-4">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a href="index.html">Главная</a></li>
+              <li><a href="services.html">Услуги</a></li>
+              <li><a href="projects.html">Проекты</a></li>
+              <li><a href="contacts.html">Контакты</a></li>
+              <li><a href="vacancies.html">Вакансии</a></li>
+              <li><a href="blog.html">Блог</a></li>
+            </ul>
+          </div>
+          <a href="index.html" aria-label="ONZA.ME" class="flex items-center ml-5"><img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img" /></a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="services.html">Услуги</a></li>
+            <li><a href="projects.html">Проекты</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+            <li><a href="vacancies.html">Вакансии</a></li>
+            <li><a href="blog.html">Блог</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end">
+          <a href="contacts.html" class="btn btn-primary btn-arrow">Обсудить проект</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <nav class="container mx-auto max-w-7xl px-4 pt-6 text-sm" aria-label="Хлебные крошки">
+        <div class="breadcrumbs">
+          <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="services.html">Услуги</a></li>
+            <li class="font-semibold">Аналитика и консалтинг</li>
+          </ul>
+        </div>
+      </nav>
+
+      <section class="container mx-auto max-w-7xl px-4 py-12 bw-section">
+        <h1 class="text-4xl font-extrabold">Аналитика и консалтинг</h1>
+        <p class="mt-3 max-w-2xl">Наши эксперты помогают компаниям превращать данные в практические решения. Мы анализируем продукт на всех этапах его развития, выявляем ключевые точки роста и выстраиваем стратегию, которая делает развитие системным и предсказуемым.</p>
+      </section>
+
+      <!-- Схема: направления услуги -->
+      <section class="container mx-auto max-w-7xl px-4 pb-6 bw-section">
+        <h2 class="text-2xl font-bold">Ключевые направления услуги</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+          <article class="border border-black p-5">
+            <div class="text-sm uppercase tracking-wide">Направление 1</div>
+            <h3 class="mt-2 font-semibold">Комплексный аудит продукта</h3>
+            <div class="mt-2 font-semibold text-sm">Что включаем:</div>
+            <ul class="mt-2 list-disc pl-5 space-y-1 text-sm">
+              <li><span class="font-medium">Технический аудит:</span> архитектура, производительность, безопасность</li>
+              <li>Выявление узких мест и оптимизация ресурсоёмких участков</li>
+              <li>Проверка соответствия требованиям App Store / Google Play</li>
+              <li><span class="font-medium">Бизнес‑анализ:</span> LTV, CAC, ROI, конкуренты, точки роста</li>
+              <li><span class="font-medium">UX/UI‑аудит:</span> юзабилити‑тесты, heatmap, улучшение пользовательского пути</li>
+            </ul>
+          </article>
+
+          <article class="border border-black p-5">
+            <div class="text-sm uppercase tracking-wide">Направление 2</div>
+            <h3 class="mt-2 font-semibold">Построение Customer Journey Map (CJM)</h3>
+            <div class="mt-2 font-semibold text-sm">Что дает:</div>
+            <ul class="mt-1 list-disc pl-5 space-y-1 text-sm">
+              <li>Визуализация пути клиента от первого касания до повторной покупки</li>
+              <li>Выявление барьеров конверсии и проблемных точек</li>
+              <li>Понимание мотивации сегментов пользователей</li>
+            </ul>
+            <div class="mt-2 font-semibold text-sm">Методы:</div>
+            <ul class="mt-1 list-disc pl-5 space-y-1 text-sm">
+              <li>Интервью с пользователями, анализ аналитики</li>
+              <li>Создание персон (buyer personas)</li>
+            </ul>
+          </article>
+
+          <article class="border border-black p-5">
+            <div class="text-sm uppercase tracking-wide">Направление 3</div>
+            <h3 class="mt-2 font-semibold">Формирование бэклога продукта</h3>
+            <p class="mt-2 text-sm">Структурируем и приоритизируем улучшения:</p>
+            <ul class="mt-1 list-disc pl-5 space-y-1 text-sm">
+              <li>Бизнес‑требования, технические задачи, UX‑улучшения</li>
+              <li>Методики ICE/RICE для оценки приоритетов</li>
+            </ul>
+          </article>
+
+          <article class="border border-black p-5">
+            <div class="text-sm uppercase tracking-wide">Направление 4</div>
+            <h3 class="mt-2 font-semibold">Разработка Roadmap</h3>
+            <ul class="mt-2 list-disc pl-5 space-y-1 text-sm">
+              <li>Планирование на 3/6/12 месяцев</li>
+              <li>Баланс: новый функционал / техдолг / оптимизации</li>
+              <li>Гибкая корректировка при изменении условий</li>
+            </ul>
+          </article>
+
+          <article class="border border-black p-5">
+            <div class="text-sm uppercase tracking-wide">Направление 5</div>
+            <h3 class="mt-2 font-semibold">Оценка и планирование</h3>
+            <ul class="mt-2 list-disc pl-5 space-y-1 text-sm">
+              <li>Оценки: Planning Poker, аналогии, story points</li>
+              <li>Планы с учётом ресурсов, бизнес‑целей и рынка</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Схема процесса (как мы работаем) -->
+      <section class="container mx-auto max-w-7xl px-4 pb-6 bw-section">
+        <h2 class="text-2xl font-bold">Как мы работаем</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-2 steps-grid">
+          <article class="border border-black p-5"><div class="text-sm uppercase tracking-wide">Шаг 1</div><h3 class="mt-2 font-semibold">Интервью и сбор данных</h3><p class="mt-2 text-sm">Бриф, цели, метрики успеха, сбор артефактов и доступов.</p><span class="step-arrow" aria-hidden="true">→</span></article>
+          <article class="border border-black p-5"><div class="text-sm uppercase tracking-wide">Шаг 2</div><h3 class="mt-2 font-semibold">Аналитика и аудит</h3><p class="mt-2 text-sm">Техаудит, UX/UI‑аудит, бизнес‑анализ, конкурентный обзор.</p><span class="step-arrow" aria-hidden="true">→</span></article>
+          <article class="border border-black p-5"><div class="text-sm uppercase tracking-wide">Шаг 3</div><h3 class="mt-2 font-semibold">CJM и гипотезы</h3><p class="mt-2 text-sm">Карта пути клиента, гипотезы роста и план экспериментов.</p><span class="step-arrow" aria-hidden="true">→</span></article>
+          <article class="border border-black p-5"><div class="text-sm uppercase tracking-wide">Шаг 4</div><h3 class="mt-2 font-semibold">Бэклог и приоритизация</h3><p class="mt-2 text-sm">RICE/ICE, формирование дорожной карты релизов.</p><span class="step-arrow" aria-hidden="true">→</span></article>
+          <article class="border border-black p-5"><div class="text-sm uppercase tracking-wide">Шаг 5</div><h3 class="mt-2 font-semibold">Оценка и план</h3><p class="mt-2 text-sm">Сроки, бюджет, риски, план внедрения.</p><span class="step-arrow" aria-hidden="true">→</span></article>
+          <article class="border border-black p-5"><div class="text-sm uppercase tracking-wide">Шаг 6</div><h3 class="mt-2 font-semibold">Сопровождение</h3><p class="mt-2 text-sm">Регулярные апдейты, аналитика и корректировка стратегии.</p><span class="step-arrow" aria-hidden="true">→</span></article>
+        </div>
+      </section>
+
+      <!-- Форматы сотрудничества -->
+      <section class="container mx-auto max-w-7xl px-4 pb-12 bw-section">
+        <h2 class="text-2xl font-bold">Форматы сотрудничества</h2>
+        <ul class="mt-3 list-disc pl-5 space-y-1 max-w-3xl">
+          <li><span class="font-medium">Разовый аудит</span> — экспресс‑анализ текущего состояния продукта</li>
+          <li><span class="font-medium">Комплексный консалтинг</span> — полный цикл от анализа до roadmap</li>
+          <li><span class="font-medium">Долгосрочное сопровождение</span> — регулярная аналитическая поддержка</li>
+        </ul>
+        <div class="mt-6"><a href="contacts.html" class="btn btn-primary btn-arrow">Запросить аудит</a></div>
+      </section>
+
+      <!-- CTA -->
+      <section class="bg-white">
+        <div class="container mx-auto max-w-7xl px-4 py-6">
+          <div class="relative w-full bg-white text-black px-6 py-10 lg:px-10 lg:py-14 flex flex-col lg:flex-row items-center justify-between gap-6 overflow-hidden border border-black">
+            <img src="assets/cta-abstract.svg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none" />
+            <div>
+              <h2 class="text-3xl font-bold">Готовы обсудить ваш проект?</h2>
+              <p class="mt-2">Расскажите о задачах — предложим решение и оценку в течение 48 часов.</p>
+            </div>
+            <a href="contacts.html" class="btn btn-arrow">Связаться с нами</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-white">
+      <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">
+        <div>
+          <img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
+          <div class="mt-2">© Onza.me</div>
+          <div class="mt-1">Все права защищены</div>
+        </div>
+        <div>
+          <div class="font-semibold">Услуги</div>
+          <ul class="mt-2 space-y-1">
+            <li><a class="link link-hover" href="service-mobile.html">Мобильные приложения</a></li>
+            <li><a class="link link-hover" href="service-design.html">Дизайн интерфейсов</a></li>
+            <li><a class="link link-hover" href="service-backend.html">Backend‑разработка</a></li>
+            <li><a class="link link-hover" href="service-support.html">Техническая поддержка</a></li>
+            <li><a class="link link-hover" href="service-analytics.html">Аналитика и консалтинг</a></li>
+          </ul>
+        </div>
+        <div>
+          <div><a class="link link-hover" href="tel:+79805422655">8 9805422655</a></div>
+          <div class="mt-1"><a class="link link-hover" href="mailto:hello.me">hello.me</a></div>
+        </div>
+        <div>
+          <div class="font-semibold">Меню</div>
+          <ul class="mt-2 space-y-1">
+            <li><a class="link link-hover" href="index.html">Главная</a></li>
+            <li><a class="link link-hover" href="services.html">Услуги</a></li>
+            <li><a class="link link-hover" href="projects.html">Проекты</a></li>
+            <li><a class="link link-hover" href="contacts.html">Контакты</a></li>
+            <li><a class="link link-hover" href="vacancies.html">Вакансии</a></li>
+            <li><a class="link link-hover" href="blog.html">Блог</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+

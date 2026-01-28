@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru" data-theme="corporate">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ONZA.ME — Блог</title>
+    <meta name="description" content="Блог ONZA.ME: статьи о дизайне, разработке и продукте." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <link href="assets/styles.css" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-grid">
+        <header class="border-b border-base-200 sticky top-0 z-50 header-glass">
+      <div class="navbar container mx-auto px-4">
+        <div class="navbar-start">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a href="index.html">Главная</a></li>
+              <li><a href="services.html">Услуги</a></li>
+              <li><a href="projects.html">Проекты</a></li>
+              <li><a href="contacts.html">Контакты</a></li>
+              <li><a href="vacancies.html">Вакансии</a></li>
+              <li><a href="blog.html">Блог</a></li>
+            </ul>
+          </div>
+          <a href="index.html" aria-label="ONZA.ME" class="flex items-center ml-5"><img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img" /></a>
+        </div>
+        <div class="navbar-center hidden lg:flex">
+          <ul class="menu menu-horizontal px-1">
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="services.html">Услуги</a></li>
+            <li><a href="projects.html">Проекты</a></li>
+            <li><a href="contacts.html">Контакты</a></li>
+            <li><a href="vacancies.html">Вакансии</a></li>
+            <li><a href="blog.html">Блог</a></li>
+          </ul>
+        </div>
+        <div class="navbar-end">
+          <a href="contacts.html" class="btn btn-primary btn-arrow">Обсудить проект</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <nav class="container mx-auto max-w-7xl px-4 pt-6 text-sm" aria-label="Хлебные крошки">
+        <div class="breadcrumbs">
+          <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li class="font-semibold">Блог</li>
+          </ul>
+        </div>
+      </nav>
+
+      <section class="container mx-auto max-w-7xl px-4 py-12 bw-section">
+        <h1 class="text-4xl font-extrabold">Блог</h1>
+        <div class="mt-8 space-y-4">
+          <a class="block border border-black px-4 py-4 card-zoom" href="blog-post-ux-trends.html">
+            <div class="flex items-center gap-6">
+              <img class="h-[21rem] w-[33rem] object-cover border border-black" src="assets/projects/p1.svg" alt="Тренды UX/UI 2025" />
+              <div class="flex-1">
+                <h3 class="text-xl font-semibold">Тренды UX/UI 2025</h3>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">UX</span>
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">UI</span>
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Design</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <a class="block border border-black px-4 py-4 card-zoom" href="blog-post-scale-backend.html">
+            <div class="flex items-center gap-6">
+              <img class="h-[21rem] w-[33rem] object-cover border border-black" src="assets/projects/p2.svg" alt="Как мы масштабировали backend до 1 млн пользователей" />
+              <div class="flex-1">
+                <h3 class="text-xl font-semibold">Как мы масштабировали backend до 1 млн пользователей</h3>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Backend</span>
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Performance</span>
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Architecture</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <a class="block border border-black px-4 py-4 card-zoom" href="blog-post-mobile-launch.html">
+            <div class="flex items-center gap-6">
+              <img class="h-[21rem] w-[33rem] object-cover border border-black" src="assets/projects/p3.svg" alt="Гайд: запуск мобильного приложения" />
+              <div class="flex-1">
+                <h3 class="text-xl font-semibold">Гайд: запуск мобильного приложения</h3>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Mobile</span>
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Product</span>
+                  <span class="inline-block border border-black px-2 py-0.5 text-xs">Launch</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-white">
+      <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">
+        <div>
+          <img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
+          <div class="mt-2">© Onza.me</div>
+          <div class="mt-1">Все права защищены</div>
+        </div>
+        <div>
+          <div class="font-semibold">Услуги</div>
+          <ul class="mt-2 space-y-1">
+            <li><a class="link link-hover" href="service-mobile.html">Мобильные приложения</a></li>
+            <li><a class="link link-hover" href="service-design.html">Дизайн интерфейсов</a></li>
+            <li><a class="link link-hover" href="service-backend.html">Backend‑разработка</a></li>
+            <li><a class="link link-hover" href="service-support.html">Техническая поддержка</a></li>
+            <li><a class="link link-hover" href="service-analytics.html">Аналитика и консалтинг</a></li>
+          </ul>
+        </div>
+        <div>
+          <div><a class="link link-hover" href="tel:+79805422655">8 9805422655</a></div>
+          <div class="mt-1"><a class="link link-hover" href="mailto:hello.me">hello.me</a></div>
+        </div>
+        <div>
+          <div class="font-semibold">Меню</div>
+          <ul class="mt-2 space-y-1">
+            <li><a class="link link-hover" href="index.html">Главная</a></li>
+            <li><a class="link link-hover" href="services.html">Услуги</a></li>
+            <li><a class="link link-hover" href="projects.html">Проекты</a></li>
+            <li><a class="link link-hover" href="contacts.html">Контакты</a></li>
+            <li><a class="link link-hover" href="vacancies.html">Вакансии</a></li>
+            <li><a class="link link-hover" href="blog.html">Блог</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+
