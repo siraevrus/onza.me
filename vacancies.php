@@ -16,27 +16,21 @@ $db = getDB();
 
 function renderVacanciesListHtml(array $vacancies): string {
     ob_start();
-    ?>
-    <section class="bw-section">
-        <div class="container mx-auto max-w-7xl px-4 py-12 auto-grid-lg gap-6">
-            <?php if (empty($vacancies)): ?>
-                <div class="col-span-full text-center py-12">
-                    <p class="text-gray-500">Вакансий пока нет.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($vacancies as $v): ?>
-                    <div class="card card-zoom h-full">
-                        <div class="card-body">
-                            <h3 class="card-title mt-2"><?php echo htmlspecialchars($v['title']); ?></h3>
-                            <p class="mt-2"><?php echo htmlspecialchars($v['subtitle']); ?></p>
-                            <div class="mt-4"><a href="contacts.php#contact-form" class="btn btn-arrow">Связаться</a></div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+    if (empty($vacancies)): ?>
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-500">Вакансий пока нет.</p>
         </div>
-    </section>
-    <?php
+    <?php else: ?>
+        <?php foreach ($vacancies as $v): ?>
+            <div class="card card-zoom">
+                <div class="card-body">
+                    <h3 class="card-title"><?php echo htmlspecialchars($v['title']); ?></h3>
+                    <p class="mt-2"><?php echo htmlspecialchars($v['subtitle']); ?></p>
+                    <div class="mt-4"><a href="contacts.php#contact-form" class="btn btn-arrow">Связаться</a></div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif;
     return (string)ob_get_clean();
 }
 

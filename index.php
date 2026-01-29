@@ -27,15 +27,15 @@ function renderBlogBlockHtml(array $posts): string {
             $subtitle = htmlspecialchars($p['subtitle']);
             $id = (int)($p['id'] ?? 0);
             echo <<<HTML
-<a class="block py-4 card-zoom bg-white" href="blog-post.php?id={$id}">
-  <div class="flex items-start gap-6">
-    <img class="h-[12rem] w-[18rem] object-cover" src="{$img}" alt="{$title}" />
-    <div class="flex-1 flex flex-col h-[12rem]">
-      <div>
-        <h3 class="text-xl font-semibold">{$title}</h3>
-        <p class="mt-2">{$subtitle}</p>
-      </div>
-      <div class="mt-auto pt-3 font-semibold">Читать ↗</div>
+<a class="card card-zoom h-full" href="blog-post.php?id={$id}">
+  <figure class="h-48 overflow-hidden">
+    <img class="w-full h-full object-cover" src="{$img}" alt="{$title}" />
+  </figure>
+  <div class="card-body">
+    <h3 class="card-title">{$title}</h3>
+    <p class="mt-2">{$subtitle}</p>
+    <div class="mt-4">
+      <span class="link link-hover text-black">Читать ↗</span>
     </div>
   </div>
 </a>

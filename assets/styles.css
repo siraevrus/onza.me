@@ -419,6 +419,29 @@ header {
 .bw-section .card-zoom { box-shadow: none !important; }
 .bw-section .card-zoom:hover { box-shadow: none !important; }
 
+/* Vacancies grid - ensure cards fill full width of container */
+.bw-section .container .grid {
+  width: 100%;
+  display: grid;
+}
+.bw-section .container .grid > .card {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #000000 !important;
+}
+
+/* Force 3 columns on large screens for vacancies */
+@media (min-width: 1024px) {
+  .bw-section .container .grid[class*="lg:grid-cols-3"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    width: 100% !important;
+  }
+  .bw-section .container .grid[class*="lg:grid-cols-3"] > .card {
+    width: 100% !important;
+  }
+}
+
 
 /* Hide Blog link across the site (header menus and footer) */
 /* Prefer hiding the whole list item where supported */
