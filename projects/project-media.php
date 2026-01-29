@@ -1,11 +1,11 @@
 <?php
 /**
- * Страница проекта: project-edtech
+ * Страница проекта: project-media
  * Загружает статический HTML файл или проект из БД
  */
-require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
-$htmlFile = __DIR__ . '/project-edtech.html';
+$htmlFile = __DIR__ . '/../project-media.html';
 if (file_exists($htmlFile)) {
     include $htmlFile;
 } else {
@@ -22,9 +22,9 @@ if (file_exists($htmlFile)) {
     $project = $stmt->fetch();
     
     if ($project) {
-        include __DIR__ . '/templates/project_page.php';
+        include __DIR__ . '/../templates/project_page.php';
     } else {
         http_response_code(404);
-        include __DIR__ . '/404.php';
+        include __DIR__ . '/../404.php';
     }
 }

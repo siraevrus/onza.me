@@ -1,9 +1,9 @@
 <?php
 /**
- * Страница: service-qa
+ * Страница: service-backend
  * Контент загружается из базы данных через CMS
  */
-require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 function getPageBySlug($slug) {
     $db = getDB();
@@ -12,21 +12,21 @@ function getPageBySlug($slug) {
     return $stmt->fetch();
 }
 
-$slug = 'service-qa';
+$slug = 'service-backend';
 $page = getPageBySlug($slug);
 
 if ($page) {
     $pageTitle = htmlspecialchars($page['title']);
     $metaDescription = htmlspecialchars($page['meta_description'] ?? '');
     $pageContent = $page['content'];
-    include __DIR__ . '/templates/base.php';
+    include __DIR__ . '/../templates/base.php';
 } else {
     // Если страница не найдена в БД, пробуем загрузить статический файл
-    $staticFile = __DIR__ . '/service-qa.html';
+    $staticFile = __DIR__ . '/../service-backend.html';
     if (file_exists($staticFile)) {
         include $staticFile;
     } else {
         http_response_code(404);
-        echo '<!doctype html><html><head><title>404 - Страница не найдена</title></head><body><h1>404 - Страница не найдена</h1><p><a href="index.php">Вернуться на главную</a></p></body></html>';
+        echo '<!doctype html><html><head><title>404 - Страница не найдена</title></head><body><h1>404 - Страница не найдена</h1><p><a href="/index.php">Вернуться на главную</a></p></body></html>';
     }
 }

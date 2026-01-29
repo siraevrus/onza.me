@@ -8,7 +8,13 @@ require_once __DIR__ . '/config/database.php';
 // Получаем имя файла из запроса
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
-$filename = basename($path);
+
+// Обрабатываем пути вида /projects/opharme1.php
+if (preg_match('#^/projects/([^/]+)$#', $path, $matches)) {
+    $filename = $matches[1];
+} else {
+    $filename = basename($path);
+}
 $filenameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
 
 // Также проверяем параметр file из .htaccess

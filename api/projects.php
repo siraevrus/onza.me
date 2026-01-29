@@ -14,12 +14,14 @@ try {
     switch ($action) {
         case 'add':
             $title = trim($_POST['title'] ?? '');
+            $subtitle = trim($_POST['subtitle'] ?? '');
             $description = trim($_POST['description'] ?? '');
             $what_done = trim($_POST['what_done'] ?? '');
             $technologies = trim($_POST['technologies'] ?? '');
             $link = trim($_POST['link'] ?? '');
             $logo_path = trim($_POST['logo_path'] ?? '');
             $tags = trim($_POST['tags'] ?? '');
+            $website = trim($_POST['website'] ?? '');
             $display_order = intval($_POST['display_order'] ?? 0);
             
             if (empty($title) || empty($description) || empty($link) || empty($logo_path) || empty($tags)) {
@@ -27,8 +29,8 @@ try {
                 exit;
             }
             
-            $stmt = $db->prepare("INSERT INTO projects (title, description, what_done, technologies, link, logo_path, tags, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$title, $description, $what_done, $technologies, $link, $logo_path, $tags, $display_order]);
+            $stmt = $db->prepare("INSERT INTO projects (title, subtitle, description, what_done, technologies, link, logo_path, tags, website, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$title, $subtitle, $description, $what_done, $technologies, $link, $logo_path, $tags, $website, $display_order]);
             
             // Создаем PHP файл для проекта, если его нет
             $projectLink = trim($link);
@@ -76,12 +78,14 @@ PHP;
         case 'edit':
             $id = intval($_POST['id'] ?? 0);
             $title = trim($_POST['title'] ?? '');
+            $subtitle = trim($_POST['subtitle'] ?? '');
             $description = trim($_POST['description'] ?? '');
             $what_done = trim($_POST['what_done'] ?? '');
             $technologies = trim($_POST['technologies'] ?? '');
             $link = trim($_POST['link'] ?? '');
             $logo_path = trim($_POST['logo_path'] ?? '');
             $tags = trim($_POST['tags'] ?? '');
+            $website = trim($_POST['website'] ?? '');
             $display_order = intval($_POST['display_order'] ?? 0);
             
             if ($id <= 0) {
@@ -94,8 +98,8 @@ PHP;
                 exit;
             }
             
-            $stmt = $db->prepare("UPDATE projects SET title = ?, description = ?, what_done = ?, technologies = ?, link = ?, logo_path = ?, tags = ?, display_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $stmt->execute([$title, $description, $what_done, $technologies, $link, $logo_path, $tags, $display_order, $id]);
+            $stmt = $db->prepare("UPDATE projects SET title = ?, subtitle = ?, description = ?, what_done = ?, technologies = ?, link = ?, logo_path = ?, tags = ?, website = ?, display_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $stmt->execute([$title, $subtitle, $description, $what_done, $technologies, $link, $logo_path, $tags, $website, $display_order, $id]);
             
             // Обновляем PHP файл для проекта, если ссылка изменилась
             $oldStmt = $db->prepare("SELECT link FROM projects WHERE id = ?");

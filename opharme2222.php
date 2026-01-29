@@ -1,11 +1,11 @@
 <?php
 /**
- * Страница проекта: project-delivery
+ * Страница проекта: opharme
  * Загружает статический HTML файл или проект из БД
  */
 require_once __DIR__ . '/config/database.php';
 
-$htmlFile = __DIR__ . '/project-delivery.html';
+$htmlFile = __DIR__ . '/opharme.html';
 if (file_exists($htmlFile)) {
     include $htmlFile;
 } else {

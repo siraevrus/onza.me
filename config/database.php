@@ -57,6 +57,12 @@ function initDB() {
     if (!isset($existing['technologies'])) {
         $db->exec("ALTER TABLE projects ADD COLUMN technologies TEXT DEFAULT ''");
     }
+    if (!isset($existing['website'])) {
+        $db->exec("ALTER TABLE projects ADD COLUMN website TEXT DEFAULT ''");
+    }
+    if (!isset($existing['subtitle'])) {
+        $db->exec("ALTER TABLE projects ADD COLUMN subtitle TEXT DEFAULT ''");
+    }
 
     // Миграция: blog_posts (если таблица уже есть, но колонок не хватает)
     $blogTables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='blog_posts'")->fetchAll();

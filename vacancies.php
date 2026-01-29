@@ -25,7 +25,7 @@ function renderVacanciesListHtml(array $vacancies): string {
             <div class="card card-zoom">
                 <div class="card-body">
                     <h3 class="card-title"><?php echo htmlspecialchars($v['title']); ?></h3>
-                    <p class="mt-2"><?php echo htmlspecialchars($v['subtitle']); ?></p>
+                    <p class="mt-2"><?php echo nl2br(htmlspecialchars($v['subtitle'])); ?></p>
                     <div class="mt-4"><a href="contacts.php#contact-form" class="btn btn-arrow">Связаться</a></div>
                 </div>
             </div>
@@ -44,7 +44,15 @@ if ($page) {
     $vacancies = $db->query("SELECT * FROM vacancies ORDER BY display_order ASC, id DESC")->fetchAll();
     $vacanciesHtml = renderVacanciesListHtml($vacancies);
 
-    $pageContent = $page['content'];
+    $breadcrumbs = '<nav class="container mx-auto max-w-7xl px-4 pt-6 text-sm" aria-label="Хлебные крошки">
+        <div class="breadcrumbs">
+            <ul>
+                <li><a href="/index.php">Главная</a></li>
+                <li class="font-semibold">Вакансии</li>
+            </ul>
+        </div>
+    </nav>';
+    $pageContent = $breadcrumbs . $page['content'];
     // Если в контенте есть плейсхолдер, заменяем, иначе добавляем в конец.
     if (strpos($pageContent, '<!--VACANCIES_LIST-->') !== false) {
         $pageContent = str_replace('<!--VACANCIES_LIST-->', $vacanciesHtml, $pageContent);
@@ -60,6 +68,18 @@ if ($page) {
         $vacanciesHtml = renderVacanciesListHtml($vacancies);
 
         $html = file_get_contents($staticFile);
+        // Breadcrumbs уже должны быть в HTML файле, но на всякий случай проверим
+        if (strpos($html, 'breadcrumbs') === false) {
+            $breadcrumbs = '<nav class="container mx-auto max-w-7xl px-4 pt-6 text-sm" aria-label="Хлебные крошки">
+        <div class="breadcrumbs">
+            <ul>
+                <li><a href="/index.php">Главная</a></li>
+                <li class="font-semibold">Вакансии</li>
+            </ul>
+        </div>
+    </nav>';
+            $html = preg_replace('/(<main[^>]*>)/', '$1' . $breadcrumbs, $html, 1);
+        }
         if (strpos($html, '<!--VACANCIES_LIST-->') !== false) {
             $html = str_replace('<!--VACANCIES_LIST-->', $vacanciesHtml, $html);
         } else {

@@ -1,8 +1,14 @@
-# Для Apache - перенаправление несуществующих файлов проектов
+# Для Apache - перенаправление несуществующих файлов проектов и услуг
 RewriteEngine On
 
-# Если файл не существует и это похоже на проект, проверяем БД
+# Директории projects и services - используем index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} ^/(projects|services)/?$ [NC]
+RewriteRule ^(.*)$ $1/index.php [L]
+
+# Если файл не существует и это похоже на проект в папке projects/, проверяем БД
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} ^/(project-|opharme|sadfasdf) [NC]
-RewriteRule ^(.*)$ project_handler.php?file=$1 [L,QSA]
+RewriteCond %{REQUEST_URI} ^/projects/(project-|opharme) [NC]
+RewriteRule ^projects/(.*)$ project_handler.php?file=$1 [L,QSA]

@@ -60,7 +60,7 @@ h1, h2, h3 {
 }
 
 /* Brand color for text logo */
-a.archivo-black-regular { color: #E9282B !important; }
+a.archivo-black-regular { color: #E93032 !important; }
 
 /* Image logo sizing */
 .logo-img { height: 25.6px; width: auto; display: block; }
@@ -141,6 +141,30 @@ header {
 .header-glass .btn:hover {
   background-color: #F97F5A !important;
   color: #000000 !important;
+}
+
+/* Mobile hamburger button - remove white background, white icon only */
+@media (max-width: 1023px) {
+  .header-glass .navbar .dropdown > .btn.btn-ghost {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0.5rem !important;
+  }
+
+  .header-glass .navbar .dropdown > .btn.btn-ghost svg {
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+  }
+
+  .header-glass .navbar .dropdown > .btn.btn-ghost:hover {
+    background-color: transparent !important;
+  }
+
+  .header-glass .navbar .dropdown > .btn.btn-ghost:hover svg {
+    stroke: #F97F5A !important;
+    color: #F97F5A !important;
+  }
+
 }
 
 .header-glass .dropdown-content {
@@ -243,7 +267,7 @@ header {
 .menu :where(li > .active),
 .menu :where(li > a[aria-current="page"]) {
   background-color: transparent !important;
-  color: #E9282B !important; /* same as hover */
+  color: #E93032 !important; /* same as hover */
   font-weight: 700 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
@@ -252,7 +276,7 @@ header {
 /* Menu hover: без плашки, сдвиг на 10px вправо и вверх (45°) */
 .menu :where(li > a):hover {
   background-color: transparent !important;
-  color: #E9282B !important;
+  color: #E93032 !important;
   box-shadow: none !important;
   text-decoration: none !important;
   transform: translate(3px, -3px);
@@ -311,7 +335,10 @@ header {
 }
 
 /* Services page: colorize "Подробнее" links on hover */
-.services-page a.link:hover { color: #E9282B !important; }
+.services-page a.link:hover { 
+  color: #E93032 !important; 
+  text-decoration: none !important;
+}
 
 /* Buttons with top-right arrow */
 .btn-arrow { position: relative; padding-right: 2.25rem !important; }
@@ -428,7 +455,6 @@ header {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  border: 1px solid #000000 !important;
 }
 
 /* Force 3 columns on large screens for vacancies */
@@ -459,7 +485,7 @@ a[href="blog.html"] { display: none !important; }
 }
 .animated-list li:hover {
   transform: translateX(15px);
-  color: #E9282B; /* Пример цвета, можно изменить на любой другой */
+  color: #E93032;
 }
 
 
@@ -506,12 +532,87 @@ figure.bg-white {
 }
 .prose a.link {
   color: #000000 !important;
-  text-decoration: underline;
-  text-decoration-color: rgba(0,0,0,.5);
-  transition: color .2s ease, text-decoration-color .2s ease;
+  text-decoration: none !important;
+  transition: color .2s ease;
 }
 .prose a.link:hover {
-  color: #E9282B !important;
-  text-decoration-color: #E9282B;
+  color: #E93032 !important;
+  text-decoration: none !important;
+}
+
+/* Badge URL links */
+a.badge {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+a.badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Gallery thumbnails - darken inactive images */
+.gallery-thumb {
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-thumb-overlay {
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.gallery-thumb-active .gallery-thumb-overlay {
+  opacity: 0 !important;
+}
+
+/* Global link styles - remove underline on hover, change color to #E93032 */
+a:not(.btn):not(.badge):not(.header-glass a):hover {
+  color: #E93032 !important;
+  text-decoration: none !important;
+}
+
+/* Link hover styles for DaisyUI link classes */
+a.link:hover,
+a.link-hover:hover,
+.link:hover,
+.link-hover:hover {
+  color: #E93032 !important;
+  text-decoration: none !important;
+}
+
+/* Footer links */
+footer a:hover,
+footer .link:hover,
+footer .link-hover:hover {
+  color: #E93032 !important;
+  text-decoration: none !important;
+}
+
+/* Breadcrumbs links */
+.breadcrumbs a:hover {
+  color: #E93032 !important;
+  text-decoration: none !important;
+}
+
+/* All links in general - no underline by default and on hover */
+a:not(.btn):not(.badge) {
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+}
+
+/* Override DaisyUI default link styles - no underline by default */
+a.link,
+a.link-hover {
+  text-decoration: none !important;
+}
+
+a.link:hover,
+a.link-hover:hover {
+  text-decoration: none !important;
+  color: #E93032 !important;
 }
 

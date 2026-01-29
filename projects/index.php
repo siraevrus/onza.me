@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 $db = getDB();
 $projects = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DESC")->fetchAll();
@@ -16,13 +16,35 @@ $projects = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DE
     <link href="https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@100..900,0&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-    <link href="assets/styles.css" rel="stylesheet" />
-    <script src="assets/header.js" defer></script>
+    <link href="/assets/styles.css" rel="stylesheet" />
+    <script src="/assets/header.js" defer></script>
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+        ym(93851165, 'init', {clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/93851165" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
   </head>
   <body class="min-h-screen flex flex-col bg-grid">
     <header></header>
 
     <main class="flex-1">
+      <nav class="container mx-auto max-w-7xl px-4 pt-6 text-sm" aria-label="Хлебные крошки">
+        <div class="breadcrumbs">
+          <ul>
+            <li><a href="/index.php">Главная</a></li>
+            <li class="font-semibold">Проекты</li>
+          </ul>
+        </div>
+      </nav>
       <section class="container mx-auto max-w-7xl px-4 py-12 bw-section">
         <h1 class="text-4xl font-extrabold">Проекты</h1>
         <p class="mt-3 max-w-2xl">Подборка реализованных решений в e‑commerce, финтехе, логистике и медиа.</p>
@@ -50,14 +72,14 @@ $projects = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DE
                   
                   // Используем PHP версию если существует, иначе HTML
                   if (file_exists($phpFile)) {
-                    $link = $phpLink;
+                    $link = '/projects/' . $phpLink;
                   } elseif (file_exists($htmlFile)) {
                     // Оставляем HTML если PHP не существует
-                    $link = $link;
+                    $link = '/projects/' . $link;
                   } else {
                     // Если ни PHP ни HTML файл не существует, используем PHP версию
                     // Файл может быть создан позже, но проект должен отображаться
-                    $link = $phpLink;
+                    $link = '/projects/' . $phpLink;
                   }
                 } elseif (!preg_match('/\.(php|html)$/', $link)) {
                   // Если ссылка без расширения, пробуем .php
@@ -65,35 +87,49 @@ $projects = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DE
                   $htmlFile = __DIR__ . '/' . $link . '.html';
                   
                   if (file_exists($phpFile)) {
-                    $link = $link . '.php';
+                    $link = '/projects/' . $link . '.php';
                   } elseif (file_exists($htmlFile)) {
-                    $link = $link . '.html';
+                    $link = '/projects/' . $link . '.html';
                   } else {
                     // Если файл не существует, добавляем .php (файл может быть создан позже)
-                    $link = $link . '.php';
+                    $link = '/projects/' . $link . '.php';
                   }
+                } else {
+                  // Если ссылка уже с расширением .php или .html, добавляем абсолютный путь
+                  $link = '/projects/' . $link;
                 }
-                // Если ссылка уже с расширением .php или .html, оставляем как есть
               }
               
               $link = htmlspecialchars($link);
             ?>
               <a class="card card-zoom" href="<?php echo $link; ?>">
                 <figure class="bg-white h-44 flex items-center justify-center">
-                  <img src="<?php echo htmlspecialchars($project['logo_path']); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>" class="h-12 w-auto" />
+                  <img src="<?php echo htmlspecialchars($project['logo_path']); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>" class="h-12 w-auto object-contain" />
                 </figure>
-                <div class="card-body">
+                <div class="card-body flex flex-col">
                   <h3 class="card-title"><?php echo htmlspecialchars($project['title']); ?></h3>
-                  <p><?php echo htmlspecialchars($project['description']); ?></p>
-                  <div class="mt-3 flex flex-wrap gap-2 text-xs">
+                  <?php if (!empty($project['subtitle'])): ?>
+                    <p class="text-sm mb-4"><?php echo htmlspecialchars($project['subtitle']); ?></p>
+                  <?php else: ?>
+                    <p class="text-sm mb-4"><?php echo htmlspecialchars($project['description']); ?></p>
+                  <?php endif; ?>
+                  <div class="mt-auto flex flex-wrap gap-2 text-xs">
                     <?php 
                     $tags = explode(',', $project['tags']);
                     foreach ($tags as $tag): 
                       $tag = trim($tag);
                       if (!empty($tag)):
+                        // Проверяем, является ли тег URL
+                        $isUrl = preg_match('/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/', $tag);
+                        if ($isUrl):
+                          // Добавляем https:// если отсутствует
+                          $url = preg_match('/^https?:\/\//', $tag) ? $tag : 'https://' . $tag;
                     ?>
+                      <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" rel="noopener noreferrer" class="badge badge-outline hover:badge-primary"><?php echo htmlspecialchars($tag); ?></a>
+                    <?php else: ?>
                       <span class="badge"><?php echo htmlspecialchars($tag); ?></span>
                     <?php 
+                        endif;
                       endif;
                     endforeach; 
                     ?>
@@ -121,30 +157,30 @@ $projects = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DE
     <footer class="bg-white">
       <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">
         <div>
-          <img src="assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
+          <img src="/assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
           <div class="mt-2">© Onza.me</div>
           <div class="mt-1">Все права защищены</div>
         </div>
         <div>
           <div class="font-semibold">Услуги</div>
           <ul class="mt-2 space-y-1">
-            <li><a class="link link-hover" href="service-mobile.php">Мобильные приложения</a></li>
-            <li><a class="link link-hover" href="service-design.php">Дизайн интерфейсов</a></li>
-            <li><a class="link link-hover" href="service-backend.php">Backend‑разработка</a></li>
-            <li><a class="link link-hover" href="service-support.php">Техническая поддержка</a></li>
-            <li><a class="link link-hover" href="service-analytics.php">Аналитика и консалтинг</a></li>
+            <li><a class="link link-hover" href="../services/service-mobile.php">Мобильные приложения</a></li>
+            <li><a class="link link-hover" href="../services/service-design.php">Дизайн интерфейсов</a></li>
+            <li><a class="link link-hover" href="../services/service-backend.php">Backend‑разработка</a></li>
+            <li><a class="link link-hover" href="../services/service-support.php">Техническая поддержка</a></li>
+            <li><a class="link link-hover" href="../services/service-analytics.php">Аналитика и консалтинг</a></li>
           </ul>
         </div>
         <div>
-          <div><a class="link link-hover" href="tel:+79805422655">8 9805422655</a></div>
-          <div class="mt-1"><a class="link link-hover" href="mailto:hello.me">hello.me</a></div>
-        </div>
+          <div><a class="link link-hover" href="tel:+79956215202">8 995 6215202</a></div>
+          <div class="mt-1"><a class="link link-hover" href="mailto:ruslan@onza.me">ruslan@onza.me</a></div>
+          <div class="mt-1"><a class="link link-hover" href="https://t.me/siraev" target="_blank">t.me/siraev</a></div>        </div>
         <div>
           <div class="font-semibold">Меню</div>
           <ul class="mt-2 space-y-1">
             <li><a class="link link-hover" href="index.php">Главная</a></li>
-            <li><a class="link link-hover" href="services.php">Услуги</a></li>
-            <li><a class="link link-hover" href="projects.php">Проекты</a></li>
+            <li><a class="link link-hover" href="../services">Услуги</a></li>
+            <li><a class="link link-hover" href="../projects">Проекты</a></li>
             <li><a class="link link-hover" href="contacts.php">Контакты</a></li>
             <li><a class="link link-hover" href="vacancies.php">Вакансии</a></li>
             <li><a class="link link-hover" href="blog.php">Блог</a></li>

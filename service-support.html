@@ -12,6 +12,20 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
     <link href="assets/styles.css" rel="stylesheet" />
     <script src="assets/header.js" defer></script>
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+        ym(93851165, 'init', {clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/93851165" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
   </head>
   <body class="min-h-screen flex flex-col bg-grid">
     <header></header>
@@ -21,7 +35,7 @@
         <div class="breadcrumbs">
           <ul>
             <li><a href="index.php">Главная</a></li>
-            <li><a href="services.php">Услуги</a></li>
+            <li><a href="/services">Услуги</a></li>
             <li class="font-semibold">DevOps и поддержка</li>
           </ul>
         </div>
@@ -38,7 +52,7 @@
         </ul>
         <div class="mt-8 flex gap-3">
           <a href="contacts.php" class="btn btn-primary btn-arrow">Запросить консультацию</a>
-          <a href="services.php" class="btn btn-outline btn-arrow">Все услуги</a>
+          <a href="/services" class="btn btn-outline btn-arrow">Все услуги</a>
         </div>
       </section>
 
@@ -151,23 +165,23 @@
         <div>
           <div class="font-semibold">Услуги</div>
           <ul class="mt-2 space-y-1">
-            <li><a class="link link-hover" href="service-mobile.php">Мобильные приложения</a></li>
-            <li><a class="link link-hover" href="service-design.php">Дизайн интерфейсов</a></li>
-            <li><a class="link link-hover" href="service-backend.php">Backend‑разработка</a></li>
-            <li><a class="link link-hover" href="service-support.php">Техническая поддержка</a></li>
-            <li><a class="link link-hover" href="service-analytics.php">Аналитика и консалтинг</a></li>
+            <li><a class="link link-hover" href="/services/service-mobile.php">Мобильные приложения</a></li>
+            <li><a class="link link-hover" href="/services/service-design.php">Дизайн интерфейсов</a></li>
+            <li><a class="link link-hover" href="/services/service-backend.php">Backend‑разработка</a></li>
+            <li><a class="link link-hover" href="/services/service-support.php">Техническая поддержка</a></li>
+            <li><a class="link link-hover" href="/services/service-analytics.php">Аналитика и консалтинг</a></li>
           </ul>
         </div>
         <div>
-          <div><a class="link link-hover" href="tel:+79805422655">8 9805422655</a></div>
-          <div class="mt-1"><a class="link link-hover" href="mailto:hello.me">hello.me</a></div>
-        </div>
+          <div><a class="link link-hover" href="tel:+79956215202">8 995 6215202</a></div>
+          <div class="mt-1"><a class="link link-hover" href="mailto:ruslan@onza.me">ruslan@onza.me</a></div>
+          <div class="mt-1"><a class="link link-hover" href="https://t.me/siraev" target="_blank">t.me/siraev</a></div>        </div>
         <div>
           <div class="font-semibold">Меню</div>
           <ul class="mt-2 space-y-1">
             <li><a class="link link-hover" href="index.php">Главная</a></li>
-            <li><a class="link link-hover" href="services.php">Услуги</a></li>
-            <li><a class="link link-hover" href="projects.php">Проекты</a></li>
+            <li><a class="link link-hover" href="/services">Услуги</a></li>
+            <li><a class="link link-hover" href="/projects">Проекты</a></li>
             <li><a class="link link-hover" href="contacts.php">Контакты</a></li>
             <li><a class="link link-hover" href="vacancies.php">Вакансии</a></li>
             <li><a class="link link-hover" href="blog.php">Блог</a></li>

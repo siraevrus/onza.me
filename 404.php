@@ -47,9 +47,9 @@
                 </ul>
             </div>
             <div>
-                <div><a class="link link-hover" href="tel:+79805422655">8 9805422655</a></div>
-                <div class="mt-1"><a class="link link-hover" href="mailto:hello.me">hello.me</a></div>
-            </div>
+                <div><a class="link link-hover" href="tel:+79956215202">8 995 6215202</a></div>
+                <div class="mt-1"><a class="link link-hover" href="mailto:ruslan@onza.me">ruslan@onza.me</a></div>
+          <div class="mt-1"><a class="link link-hover" href="https://t.me/siraev" target="_blank">t.me/siraev</a></div>            </div>
             <div>
                 <div class="font-semibold">Меню</div>
                 <ul class="mt-2 space-y-1">

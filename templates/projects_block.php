@@ -17,32 +17,35 @@ if (empty($projects)): ?>
       // Если ссылка заканчивается на .html, пробуем .php версию
       if (preg_match('/\.html$/', $link)) {
         $phpLink = preg_replace('/\.html$/', '.php', $link);
-        $phpFile = __DIR__ . '/../' . $phpLink;
-        $htmlFile = __DIR__ . '/../' . $link;
+        $phpFile = __DIR__ . '/../projects/' . $phpLink;
+        $htmlFile = __DIR__ . '/../projects/' . $link;
         
         // Используем PHP версию если существует, иначе HTML
         if (file_exists($phpFile)) {
-          $link = $phpLink;
+          $link = '/projects/' . $phpLink;
         } elseif (file_exists($htmlFile)) {
           // Оставляем HTML если PHP не существует
-          $link = $link;
+          $link = '/projects/' . $link;
         } else {
           // Если ни PHP ни HTML файл не существует, используем PHP версию
-          $link = $phpLink;
+          $link = '/projects/' . $phpLink;
         }
       } elseif (!preg_match('/\.(php|html)$/', $link)) {
         // Если ссылка без расширения, пробуем .php
-        $phpFile = __DIR__ . '/../' . $link . '.php';
-        $htmlFile = __DIR__ . '/../' . $link . '.html';
+        $phpFile = __DIR__ . '/../projects/' . $link . '.php';
+        $htmlFile = __DIR__ . '/../projects/' . $link . '.html';
         
         if (file_exists($phpFile)) {
-          $link = $link . '.php';
+          $link = '/projects/' . $link . '.php';
         } elseif (file_exists($htmlFile)) {
-          $link = $link . '.html';
+          $link = '/projects/' . $link . '.html';
         } else {
           // Если файл не существует, добавляем .php
-          $link = $link . '.php';
+          $link = '/projects/' . $link . '.php';
         }
+      } else {
+        // Если ссылка уже с расширением .php или .html, добавляем абсолютный путь
+        $link = '/projects/' . $link;
       }
     }
     
@@ -50,20 +53,32 @@ if (empty($projects)): ?>
   ?>
     <a class="card card-zoom" href="<?php echo $link; ?>">
       <figure class="bg-white h-44 flex items-center justify-center">
-        <img src="<?php echo htmlspecialchars($project['logo_path']); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>" class="h-12 w-auto" />
+        <img src="<?php echo htmlspecialchars($project['logo_path']); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>" class="h-12 w-auto object-contain" />
       </figure>
-      <div class="card-body">
+      <div class="card-body flex flex-col">
         <h3 class="card-title"><?php echo htmlspecialchars($project['title']); ?></h3>
-        <p><?php echo htmlspecialchars($project['description']); ?></p>
-        <div class="mt-3 flex flex-wrap gap-2 text-xs">
+        <?php if (!empty($project['subtitle'])): ?>
+          <p class="text-sm mb-4"><?php echo htmlspecialchars($project['subtitle']); ?></p>
+        <?php else: ?>
+          <p class="text-sm mb-4"><?php echo htmlspecialchars($project['description']); ?></p>
+        <?php endif; ?>
+        <div class="mt-auto flex flex-wrap gap-2 text-xs">
           <?php 
           $tags = explode(',', $project['tags']);
           foreach ($tags as $tag): 
             $tag = trim($tag);
             if (!empty($tag)):
+              // Проверяем, является ли тег URL
+              $isUrl = preg_match('/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/', $tag);
+              if ($isUrl):
+                // Добавляем https:// если отсутствует
+                $url = preg_match('/^https?:\/\//', $tag) ? $tag : 'https://' . $tag;
           ?>
+            <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" rel="noopener noreferrer" class="badge badge-outline hover:badge-primary"><?php echo htmlspecialchars($tag); ?></a>
+          <?php else: ?>
             <span class="badge"><?php echo htmlspecialchars($tag); ?></span>
           <?php 
+              endif;
             endif;
           endforeach; 
           ?>

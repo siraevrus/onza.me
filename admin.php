@@ -6,6 +6,20 @@ $db = getDB();
 $message = '';
 $messageType = '';
 $activeTab = $_GET['tab'] ?? 'projects';
+$editProjectId = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
+
+// Получаем проект для редактирования, если указан ID
+$editProject = null;
+if ($editProjectId > 0 && $activeTab === 'projects') {
+    $stmt = $db->prepare("SELECT * FROM projects WHERE id = ?");
+    $stmt->execute([$editProjectId]);
+    $editProject = $stmt->fetch();
+    if (!$editProject) {
+        $editProjectId = 0;
+        $message = 'Проект не найден';
+        $messageType = 'error';
+    }
+}
 
 // Обработка удаления проекта
 if (isset($_GET['delete']) && is_numeric($_GET['delete']) && $activeTab === 'projects') {
@@ -44,6 +58,20 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
     <link href="assets/styles.css" rel="stylesheet" />
     <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+        ym(93851165, 'init', {clickmap:true, referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/93851165" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 </head>
 <body class="min-h-screen bg-grid">
     <div class="drawer lg:drawer-open">
@@ -69,12 +97,121 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 <?php endif; ?>
 
         <?php if ($activeTab === 'projects'): ?>
-            <!-- Раздел проектов -->
-            <div class="card bg-white mb-6">
-                <div class="card-body">
-                    <h2 class="card-title text-xl mb-4">Добавить новый проект</h2>
-                    <form id="projectForm" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="add" />
+            <?php if ($editProjectId > 0 && $editProject): ?>
+                <!-- Страница редактирования проекта -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold">Редактировать проект</h2>
+                        <a href="?tab=projects" class="btn btn-outline">← Назад к списку</a>
+                    </div>
+                    
+                    <div class="card bg-white">
+                        <div class="card-body">
+                            <form id="editProjectPageForm" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="action" value="edit" />
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($editProject['id']); ?>" />
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Название проекта *</span>
+                                        </label>
+                                        <input type="text" name="title" value="<?php echo htmlspecialchars($editProject['title']); ?>" class="input input-bordered" required />
+                                    </div>
+                                    
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Ссылка на страницу проекта *</span>
+                                        </label>
+                                        <input type="text" name="link" value="<?php echo htmlspecialchars($editProject['link']); ?>" class="input input-bordered" required />
+                                    </div>
+                                </div>
+                                
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Подзаголовок</span>
+                                        <span class="label-text-alt">Краткое описание для карточки проекта</span>
+                                    </label>
+                                    <input type="text" name="subtitle" value="<?php echo htmlspecialchars($editProject['subtitle'] ?? ''); ?>" class="input input-bordered" placeholder="Краткое описание проекта" />
+                                </div>
+                                
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Описание *</span>
+                                    </label>
+                                    <textarea name="description" id="edit_project_description_page" class="textarea textarea-bordered" rows="5" required><?php echo htmlspecialchars($editProject['description']); ?></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Что сделали</span>
+                                            <span class="label-text-alt">Каждый пункт с новой строки</span>
+                                        </label>
+                                        <textarea name="what_done" class="textarea textarea-bordered" rows="8"><?php echo htmlspecialchars($editProject['what_done'] ?? ''); ?></textarea>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Технологии</span>
+                                            <span class="label-text-alt">Каждый пункт с новой строки</span>
+                                        </label>
+                                        <textarea name="technologies" class="textarea textarea-bordered" rows="8"><?php echo htmlspecialchars($editProject['technologies'] ?? ''); ?></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Логотип проекта *</span>
+                                        </label>
+                                        <div class="flex flex-col gap-2">
+                                            <input type="file" id="edit_page_logo_upload" name="logo_upload" accept="image/*" class="file-input file-input-bordered" />
+                                            <input type="hidden" id="edit_page_logo_path" name="logo_path" value="<?php echo htmlspecialchars($editProject['logo_path']); ?>" />
+                                            <div id="edit_page_logo_preview" class="mt-2">
+                                                <div class="text-sm text-gray-500 mb-1">Текущий логотип:</div>
+                                                <img id="edit_page_logo_preview_img" src="<?php echo htmlspecialchars($editProject['logo_path']); ?>" alt="Preview" class="max-w-32 max-h-32 object-contain border border-gray-300 rounded" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Теги (через запятую) *</span>
+                                        </label>
+                                        <input type="text" name="tags" value="<?php echo htmlspecialchars($editProject['tags']); ?>" class="input input-bordered" required />
+                                    </div>
+                                </div>
+                                
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Сайт</span>
+                                        <span class="label-text-alt">URL сайта проекта (например: www.example.com)</span>
+                                    </label>
+                                    <input type="text" name="website" value="<?php echo htmlspecialchars($editProject['website'] ?? ''); ?>" class="input input-bordered" placeholder="www.example.com" />
+                                </div>
+                                
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Порядок отображения</span>
+                                    </label>
+                                    <input type="number" name="display_order" value="<?php echo htmlspecialchars($editProject['display_order']); ?>" class="input input-bordered" />
+                                </div>
+                                
+                                <div class="flex gap-4">
+                                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                    <a href="?tab=projects" class="btn btn-outline">Отмена</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <!-- Раздел проектов -->
+                <div class="card bg-white mb-6">
+                    <div class="card-body">
+                        <h2 class="card-title text-xl mb-4">Добавить новый проект</h2>
+                        <form id="projectForm" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="action" value="add" />
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div class="form-control">
@@ -94,9 +231,17 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                         
                         <div class="form-control mb-4">
                             <label class="label">
+                                <span class="label-text">Подзаголовок</span>
+                                <span class="label-text-alt">Краткое описание для карточки проекта</span>
+                            </label>
+                            <input type="text" name="subtitle" class="input input-bordered" placeholder="Краткое описание проекта" />
+                        </div>
+                        
+                        <div class="form-control mb-4">
+                            <label class="label">
                                 <span class="label-text">Описание *</span>
                             </label>
-                            <textarea name="description" class="textarea textarea-bordered" rows="3" required></textarea>
+                            <textarea name="description" id="project_description" class="textarea textarea-bordered" rows="3" required></textarea>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -137,6 +282,14 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                                 </label>
                                 <input type="text" name="tags" class="input input-bordered" placeholder="web, ux, android" required />
                             </div>
+                        </div>
+                        
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Сайт</span>
+                                <span class="label-text-alt">URL сайта проекта (например: www.example.com)</span>
+                            </label>
+                            <input type="text" name="website" class="input input-bordered" placeholder="www.example.com" />
                         </div>
                         
                         <div class="form-control mb-4">
@@ -183,7 +336,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                                             <td><?php echo htmlspecialchars($project['tags']); ?></td>
                                             <td><?php echo htmlspecialchars($project['display_order']); ?></td>
                                             <td>
-                                                <button onclick="window.editProject(<?php echo htmlspecialchars(json_encode($project)); ?>)" class="btn btn-sm btn-outline">Редактировать</button>
+                                                <a href="?tab=projects&edit=<?php echo $project['id']; ?>" class="btn btn-sm btn-outline">Редактировать</a>
                                                 <button type="button" class="btn btn-sm btn-info js-open-gallery" data-project-id="<?php echo (int)$project['id']; ?>">Галерея</button>
                                                 <a href="?tab=projects&delete=<?php echo $project['id']; ?>" class="btn btn-sm btn-error" onclick="return confirm('Вы уверены, что хотите удалить этот проект?')">Удалить</a>
                                             </td>
@@ -195,6 +348,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                     <?php endif; ?>
                 </div>
             </div>
+            <?php endif; ?>
         <?php elseif ($activeTab === 'pages'): ?>
             <!-- Раздел страниц -->
             <div class="card bg-white mb-6">
@@ -291,19 +445,17 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 <div class="card-body">
                     <h2 class="card-title text-xl mb-4">Добавить вакансию</h2>
                     <form id="vacancyForm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Заголовок *</span>
-                                </label>
-                                <input type="text" name="title" class="input input-bordered" required />
-                            </div>
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Подзаголовок *</span>
-                                </label>
-                                <input type="text" name="subtitle" class="input input-bordered" required />
-                            </div>
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Заголовок *</span>
+                            </label>
+                            <input type="text" name="title" class="input input-bordered" required />
+                        </div>
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Подзаголовок *</span>
+                            </label>
+                            <textarea name="subtitle" class="textarea textarea-bordered" rows="10" required></textarea>
                         </div>
                         <div class="form-control">
                             <button type="submit" class="btn btn-primary">Добавить вакансию</button>
@@ -508,6 +660,14 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 
                 <div class="form-control mb-4">
                     <label class="label">
+                        <span class="label-text">Подзаголовок</span>
+                        <span class="label-text-alt">Краткое описание для карточки проекта</span>
+                    </label>
+                    <input type="text" name="subtitle" id="edit_project_subtitle" class="input input-bordered" placeholder="Краткое описание проекта" />
+                </div>
+                
+                <div class="form-control mb-4">
+                    <label class="label">
                         <span class="label-text">Описание *</span>
                     </label>
                     <textarea name="description" id="edit_project_description" class="textarea textarea-bordered" rows="3" required></textarea>
@@ -549,6 +709,14 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                         <span class="label-text">Теги (через запятую) *</span>
                     </label>
                     <input type="text" name="tags" id="edit_project_tags" class="input input-bordered" required />
+                </div>
+                
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Сайт</span>
+                        <span class="label-text-alt">URL сайта проекта (например: www.example.com)</span>
+                    </label>
+                    <input type="text" name="website" id="edit_project_website" class="input input-bordered" placeholder="www.example.com" />
                 </div>
                 
                 <div class="form-control mb-4">
@@ -727,7 +895,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                         <label class="label">
                             <span class="label-text">Подзаголовок *</span>
                         </label>
-                        <input type="text" id="edit_vacancy_subtitle" name="subtitle" class="input input-bordered" required />
+                        <textarea id="edit_vacancy_subtitle" name="subtitle" class="textarea textarea-bordered" rows="10" required></textarea>
                     </div>
                 </div>
 
@@ -752,6 +920,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             document.getElementById('edit_project_id').value = project.id;
             document.getElementById('edit_project_title').value = project.title;
             document.getElementById('edit_project_link').value = project.link;
+            document.getElementById('edit_project_subtitle').value = project.subtitle || '';
             document.getElementById('edit_project_description').value = project.description;
             const whatDoneEl = document.getElementById('edit_project_what_done');
             if (whatDoneEl) whatDoneEl.value = project.what_done || '';
@@ -759,6 +928,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             if (techEl) techEl.value = project.technologies || '';
             document.getElementById('edit_project_logo_path').value = project.logo_path;
             document.getElementById('edit_project_tags').value = project.tags;
+            document.getElementById('edit_project_website').value = project.website || '';
             document.getElementById('edit_project_display_order').value = project.display_order;
             
             // Показываем текущий логотип
@@ -771,6 +941,20 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             }
             
             document.getElementById('editProjectModal').showModal();
+            
+            // Инициализируем CKEditor после открытия модального окна
+            setTimeout(function() {
+                if (editProjectDescriptionEditor) {
+                    editProjectDescriptionEditor.destroy();
+                    editProjectDescriptionEditor = null;
+                }
+                if (document.getElementById('edit_project_description')) {
+                    editProjectDescriptionEditor = CKEDITOR.replace('edit_project_description');
+                    if (editProjectDescriptionEditor) {
+                        editProjectDescriptionEditor.setData(project.description || '');
+                    }
+                }
+            }, 100);
         };
         
         // Обработка загрузки логотипа при создании проекта
@@ -805,7 +989,38 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             });
         }
         
-        // Обработка загрузки логотипа при редактировании проекта
+        // Обработка загрузки логотипа при редактировании проекта на отдельной странице
+        const editPageLogoUpload = document.getElementById('edit_page_logo_upload');
+        if (editPageLogoUpload) {
+            editPageLogoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('logo', file);
+                
+                fetch('api/upload_logo.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('edit_page_logo_path').value = data.path;
+                        document.getElementById('edit_page_logo_preview_img').src = data.path;
+                    } else {
+                        alert('Ошибка загрузки: ' + data.message);
+                        e.target.value = '';
+                    }
+                })
+                .catch(error => {
+                    alert('Ошибка: ' + error);
+                    e.target.value = '';
+                });
+            }
+            });
+        }
+        
+        // Обработка загрузки логотипа при редактировании проекта в модальном окне
         const editLogoUpload = document.getElementById('edit_logo_upload');
         if (editLogoUpload) {
             editLogoUpload.addEventListener('change', function(e) {
@@ -852,12 +1067,14 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             const formData = new FormData();
             formData.append('action', 'add');
             formData.append('title', document.querySelector('#projectForm input[name="title"]').value);
-            formData.append('description', document.querySelector('#projectForm textarea[name="description"]').value);
+            formData.append('subtitle', document.querySelector('#projectForm input[name="subtitle"]')?.value || '');
+            formData.append('description', projectDescriptionEditor ? projectDescriptionEditor.getData() : document.querySelector('#projectForm textarea[name="description"]').value);
             formData.append('what_done', document.querySelector('#projectForm textarea[name="what_done"]')?.value || '');
             formData.append('technologies', document.querySelector('#projectForm textarea[name="technologies"]')?.value || '');
             formData.append('link', document.querySelector('#projectForm input[name="link"]').value);
             formData.append('logo_path', logoPath);
             formData.append('tags', document.querySelector('#projectForm input[name="tags"]').value);
+            formData.append('website', document.querySelector('#projectForm input[name="website"]')?.value || '');
             formData.append('display_order', document.querySelector('#projectForm input[name="display_order"]').value || '0');
             
             fetch('api/projects.php', {
@@ -897,12 +1114,14 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             formData.append('action', 'edit');
             formData.append('id', document.getElementById('edit_project_id').value);
             formData.append('title', document.getElementById('edit_project_title').value);
-            formData.append('description', document.getElementById('edit_project_description').value);
+            formData.append('description', editProjectDescriptionEditor ? editProjectDescriptionEditor.getData() : document.getElementById('edit_project_description').value);
             formData.append('what_done', document.getElementById('edit_project_what_done')?.value || '');
             formData.append('technologies', document.getElementById('edit_project_technologies')?.value || '');
             formData.append('link', document.getElementById('edit_project_link').value);
             formData.append('logo_path', logoPath);
             formData.append('tags', document.getElementById('edit_project_tags').value);
+            formData.append('website', document.getElementById('edit_project_website').value || '');
+            formData.append('subtitle', document.getElementById('edit_project_subtitle').value || '');
             formData.append('display_order', document.getElementById('edit_project_display_order').value || '0');
             
             fetch('api/projects.php', {
@@ -913,7 +1132,53 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             .then(data => {
                 if (data.success) {
                     alert('Проект успешно обновлен!');
-                    location.reload();
+                    window.location.href = '?tab=projects';
+                } else {
+                    alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
+                }
+            })
+            .catch(error => {
+                alert('Ошибка: ' + error);
+            });
+        });
+        }
+        
+        // Обработка формы редактирования проекта на отдельной странице
+        const editProjectPageForm = document.getElementById('editProjectPageForm');
+        if (editProjectPageForm) {
+            editProjectPageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // При редактировании используем текущий логотип, если новый не загружен
+            let logoPath = document.getElementById('edit_page_logo_path').value.trim();
+            if (!logoPath) {
+                alert('Пожалуйста, загрузите логотип');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('action', 'edit');
+            formData.append('id', document.querySelector('#editProjectPageForm input[name="id"]').value);
+            formData.append('title', document.querySelector('#editProjectPageForm input[name="title"]').value);
+            formData.append('subtitle', document.querySelector('#editProjectPageForm input[name="subtitle"]')?.value || '');
+            formData.append('description', editProjectDescriptionEditor ? editProjectDescriptionEditor.getData() : document.querySelector('#editProjectPageForm textarea[name="description"]').value);
+            formData.append('what_done', document.querySelector('#editProjectPageForm textarea[name="what_done"]')?.value || '');
+            formData.append('technologies', document.querySelector('#editProjectPageForm textarea[name="technologies"]')?.value || '');
+            formData.append('link', document.querySelector('#editProjectPageForm input[name="link"]').value);
+            formData.append('logo_path', logoPath);
+            formData.append('tags', document.querySelector('#editProjectPageForm input[name="tags"]').value);
+            formData.append('website', document.querySelector('#editProjectPageForm input[name="website"]')?.value || '');
+            formData.append('display_order', document.querySelector('#editProjectPageForm input[name="display_order"]').value || '0');
+            
+            fetch('api/projects.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Проект успешно обновлен!');
+                    window.location.href = '?tab=projects';
                 } else {
                     alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
                 }
@@ -1487,6 +1752,16 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
         document.addEventListener('DOMContentLoaded', function() {
             if (document.getElementById('page_content') && document.getElementById('page_content').offsetParent !== null) {
                 editorInstance = CKEDITOR.replace('page_content');
+            }
+            
+            // Инициализация CKEditor для поля "Описание" в форме добавления проекта
+            if (document.getElementById('project_description') && document.getElementById('project_description').offsetParent !== null) {
+                projectDescriptionEditor = CKEDITOR.replace('project_description');
+            }
+            
+            // Инициализация CKEditor для поля "Описание" в форме редактирования проекта на отдельной странице
+            if (document.getElementById('edit_project_description_page') && document.getElementById('edit_project_description_page').offsetParent !== null) {
+                editProjectDescriptionEditor = CKEDITOR.replace('edit_project_description_page');
             }
         });
         
