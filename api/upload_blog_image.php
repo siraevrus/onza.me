@@ -4,6 +4,7 @@
  */
 require_once __DIR__ . '/../config/auth.php';
 requireAuth();
+requireCsrf();
 
 header('Content-Type: application/json');
 

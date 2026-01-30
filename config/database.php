@@ -14,7 +14,10 @@ function getDB() {
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         return $db;
     } catch (PDOException $e) {
-        die('Ошибка подключения к базе данных: ' . $e->getMessage());
+        // Логируем ошибку (если есть возможность)
+        error_log('Database connection error: ' . $e->getMessage());
+        // Показываем пользователю общее сообщение без технических деталей
+        die('Произошла ошибка при подключении к базе данных. Пожалуйста, попробуйте позже.');
     }
 }
 
@@ -125,6 +128,31 @@ function initDB() {
         display_order INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+    
+    // Таблица услуг
+    $db->exec("CREATE TABLE IF NOT EXISTS services (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        subtitle TEXT NOT NULL,
+        detail_subtitle TEXT DEFAULT '',
+        slug TEXT UNIQUE NOT NULL,
+        display_order INTEGER DEFAULT 0,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+    
+    // Таблица блоков услуг
+    $db->exec("CREATE TABLE IF NOT EXISTS service_blocks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        service_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        has_background INTEGER DEFAULT 0,
+        display_order INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
     )");
     
     // Создаем администратора по умолчанию, если его нет

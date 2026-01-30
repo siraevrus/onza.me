@@ -17,23 +17,21 @@ $db = getDB();
 function renderBlogListHtml(array $posts): string {
     ob_start();
     ?>
-    <div class="mt-8 space-y-4">
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         <?php if (empty($posts)): ?>
-            <div class="text-gray-500">Статей пока нет.</div>
+            <div class="col-span-full text-gray-500">Статей пока нет.</div>
         <?php else: ?>
             <?php foreach ($posts as $p): ?>
-                <a class="block py-4 card-zoom bg-white" href="blog-post.php?id=<?php echo (int)$p['id']; ?>">
-                    <div class="flex items-start gap-6">
-                        <img class="h-[21rem] w-[33rem] object-cover"
+                <a class="block card-zoom bg-white" href="blog-post.php?id=<?php echo (int)$p['id']; ?>">
+                    <figure class="h-96 overflow-hidden">
+                        <img class="w-full h-full object-cover"
                              src="<?php echo htmlspecialchars($p['image_path']); ?>"
                              alt="<?php echo htmlspecialchars($p['title']); ?>" />
-                        <div class="flex-1 flex flex-col h-[21rem]">
-                            <div>
-                                <h3 class="text-xl font-semibold"><?php echo htmlspecialchars($p['title']); ?></h3>
-                                <p class="mt-2"><?php echo htmlspecialchars($p['subtitle']); ?></p>
-                            </div>
-                            <div class="mt-auto pt-4 font-semibold">Читать ↗</div>
-                        </div>
+                    </figure>
+                    <div class="card-body">
+                        <h3 class="card-title"><?php echo htmlspecialchars($p['title']); ?></h3>
+                        <p class="mt-2"><?php echo htmlspecialchars($p['subtitle']); ?></p>
+                        <div class="mt-4 font-semibold">Читать ↗</div>
                     </div>
                 </a>
             <?php endforeach; ?>

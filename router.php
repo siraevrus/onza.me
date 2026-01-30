@@ -9,6 +9,12 @@ $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
 $filePath = __DIR__ . $path;
 
+// Если запрашивается существующий файл (не PHP), отдаем его напрямую
+// Это важно для CSS, JS, изображений и других статических файлов
+if (file_exists($filePath) && is_file($filePath) && !preg_match('/\.php$/', $path)) {
+    return false; // Пусть встроенный сервер обработает сам
+}
+
 // Обработка путей вида /projects/opharme.php или /services/service-analytics.php
 // Проверяем ПЕРЕД проверкой директории, чтобы файлы в папках имели приоритет
 if (preg_match('#^/(projects|services)/([^/]+\.php)$#', $path, $matches)) {
@@ -18,6 +24,39 @@ if (preg_match('#^/(projects|services)/([^/]+\.php)$#', $path, $matches)) {
     if (file_exists($fullPath)) {
         include $fullPath;
         return true;
+    }
+    
+    // Если файл не существует и это услуга, проверяем БД
+    if ($folder === 'services') {
+        $slug = pathinfo($filename, PATHINFO_FILENAME);
+        require_once __DIR__ . '/config/database.php';
+        $db = getDB();
+        
+        try {
+            $stmt = $db->prepare("SELECT * FROM services WHERE slug = ? AND is_active = 1");
+            $stmt->execute([$slug]);
+            $service = $stmt->fetch();
+            
+            if ($service) {
+                // Загружаем блоки услуги
+                try {
+                    $blocksStmt = $db->prepare("SELECT * FROM service_blocks WHERE service_id = ? ORDER BY display_order ASC, id ASC");
+                    $blocksStmt->execute([$service['id']]);
+                    $blocks = $blocksStmt->fetchAll();
+                } catch (Exception $e) {
+                    $blocks = [];
+                }
+                
+                if (!isset($blocks)) {
+                    $blocks = [];
+                }
+                
+                include __DIR__ . '/templates/service_page.php';
+                return true;
+            }
+        } catch (Exception $e) {
+            // Игнорируем ошибки БД, продолжаем поиск
+        }
     }
 }
 

@@ -4,6 +4,7 @@
  */
 require_once __DIR__ . '/../config/auth.php';
 requireAuth();
+requireCsrf();
 
 header('Content-Type: application/json');
 
@@ -15,9 +16,9 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
-// Разрешенные типы файлов
-$allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp'];
-$allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
+// Разрешенные типы файлов (SVG запрещен из-за возможности XSS атак)
+$allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+$allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -39,7 +40,7 @@ $fileType = $file['type'];
 // Проверка типа файла
 $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 if (!in_array($fileExtension, $allowedExtensions) || !in_array($fileType, $allowedTypes)) {
-    echo json_encode(['success' => false, 'message' => 'Недопустимый тип файла. Разрешены: JPG, PNG, GIF, SVG, WEBP']);
+    echo json_encode(['success' => false, 'message' => 'Недопустимый тип файла. Разрешены: JPG, PNG, GIF, WEBP']);
     exit;
 }
 

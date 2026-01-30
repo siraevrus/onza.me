@@ -13,6 +13,11 @@ if (!isAuthenticated()) {
     exit;
 }
 
+// CSRF проверка для изменяющих операций
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+}
+
 $db = getDB();
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
@@ -116,7 +121,8 @@ try {
             echo json_encode(['success' => false, 'message' => 'Неизвестное действие']);
     }
 } catch (PDOException $e) {
+    error_log('Database error in pages.php: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Ошибка базы данных: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Произошла ошибка при работе с базой данных']);
 }
 ?>

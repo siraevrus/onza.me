@@ -7,6 +7,11 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../config/auth.php';
 requireAuth();
 
+// CSRF проверка для изменяющих операций
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+}
+
 $db = getDB();
 $action = $_POST['action'] ?? '';
 
@@ -190,6 +195,7 @@ PHP;
             echo json_encode(['success' => false, 'message' => 'Неизвестное действие']);
     }
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()]);
+    error_log('Error in projects.php: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Произошла ошибка при выполнении операции']);
 }
 ?>

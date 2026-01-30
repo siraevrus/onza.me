@@ -44,6 +44,9 @@ $vacancies = $db->query("SELECT * FROM vacancies ORDER BY display_order ASC, id 
 
 // Получаем статьи блога
 $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id DESC")->fetchAll();
+
+// Получаем услуги
+$services = $db->query("SELECT * FROM services ORDER BY display_order ASC, id DESC")->fetchAll();
 ?>
 <!doctype html>
 <html lang="ru" data-theme="corporate">
@@ -595,6 +598,97 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                     <?php endif; ?>
                 </div>
             </div>
+        <?php elseif ($activeTab === 'services'): ?>
+            <!-- Раздел услуг -->
+            <div class="card bg-white mb-6">
+                <div class="card-body">
+                    <h2 class="card-title text-xl mb-4">Добавить услугу</h2>
+                    <form id="serviceForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Заголовок *</span>
+                                </label>
+                                <input type="text" name="title" class="input input-bordered" required />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Slug *</span>
+                                    <span class="label-text-alt">Например: service-analytics</span>
+                                </label>
+                                <input type="text" name="slug" class="input input-bordered" placeholder="service-analytics" required />
+                            </div>
+                        </div>
+
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Подзаголовок для превью *</span>
+                                <span class="label-text-alt">Отображается в списке услуг</span>
+                            </label>
+                            <textarea name="subtitle" class="textarea textarea-bordered" rows="2" required></textarea>
+                        </div>
+
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Детальный подзаголовок</span>
+                                <span class="label-text-alt">Отображается на детальной странице услуги</span>
+                            </label>
+                            <textarea name="detail_subtitle" class="textarea textarea-bordered" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text">Порядок отображения</span>
+                            </label>
+                            <input type="number" name="display_order" class="input input-bordered" value="0" />
+                        </div>
+
+                        <div class="form-control">
+                            <button type="submit" class="btn btn-primary">Добавить услугу</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card bg-white">
+                <div class="card-body">
+                    <h2 class="card-title text-xl mb-4">Список услуг (<?php echo count($services); ?>)</h2>
+                    <?php if (empty($services)): ?>
+                        <p class="text-gray-500">Услуг пока нет.</p>
+                    <?php else: ?>
+                        <div class="overflow-x-auto">
+                            <table class="table table-zebra">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Заголовок</th>
+                                        <th>Slug</th>
+                                        <th>Подзаголовок</th>
+                                        <th>Порядок</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($services as $s): ?>
+                                        <tr>
+                                            <td><?php echo (int)$s['id']; ?></td>
+                                            <td><strong><?php echo htmlspecialchars($s['title']); ?></strong></td>
+                                            <td><code><?php echo htmlspecialchars($s['slug']); ?></code></td>
+                                            <td><?php echo htmlspecialchars(mb_substr($s['subtitle'], 0, 50)); ?><?php echo mb_strlen($s['subtitle']) > 50 ? '…' : ''; ?></td>
+                                            <td><?php echo (int)$s['display_order']; ?></td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline" onclick="window.editService(<?php echo htmlspecialchars(json_encode($s)); ?>)">Редактировать</button>
+                                                <button type="button" class="btn btn-sm btn-info js-open-service-blocks" data-service-id="<?php echo (int)$s['id']; ?>">Блоки</button>
+                                                <button type="button" class="btn btn-sm btn-error" data-service-delete="<?php echo (int)$s['id']; ?>">Удалить</button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         <?php else: ?>
             <div class="alert alert-warning">
                 <span>Неизвестная вкладка.</span>
@@ -629,6 +723,11 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                     <li>
                         <a href="?tab=blog" class="<?php echo $activeTab === 'blog' ? 'active' : ''; ?>" <?php echo $activeTab === 'blog' ? 'aria-current="page"' : ''; ?>>
                             Блог
+                        </a>
+                    </li>
+                    <li>
+                        <a href="?tab=services" class="<?php echo $activeTab === 'services' ? 'active' : ''; ?>" <?php echo $activeTab === 'services' ? 'aria-current="page"' : ''; ?>>
+                            Услуги
                         </a>
                     </li>
                 </ul>
@@ -910,7 +1009,130 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
         </form>
     </dialog>
     
+    <!-- Модальное окно для редактирования услуги -->
+    <dialog id="editServiceModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg mb-4">Редактировать услугу</h3>
+            <form id="editServiceForm">
+                <input type="hidden" name="action" value="edit" />
+                <input type="hidden" name="id" id="edit_service_id" />
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Заголовок *</span>
+                        </label>
+                        <input type="text" name="title" id="edit_service_title" class="input input-bordered" required />
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Slug *</span>
+                        </label>
+                        <input type="text" name="slug" id="edit_service_slug" class="input input-bordered" required />
+                    </div>
+                </div>
+                
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Подзаголовок для превью *</span>
+                    </label>
+                    <textarea name="subtitle" id="edit_service_subtitle" class="textarea textarea-bordered" rows="2" required></textarea>
+                </div>
+                
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Детальный подзаголовок</span>
+                    </label>
+                    <textarea name="detail_subtitle" id="edit_service_detail_subtitle" class="textarea textarea-bordered" rows="2"></textarea>
+                </div>
+                
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Порядок отображения</span>
+                    </label>
+                    <input type="number" name="display_order" id="edit_service_display_order" class="input input-bordered" />
+                </div>
+                
+                <div class="modal-action">
+                    <button type="button" onclick="document.getElementById('editServiceModal').close()" class="btn btn-outline">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+    
+    <!-- Модальное окно для управления блоками услуги -->
+    <dialog id="serviceBlocksModal" class="modal modal-lg">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg mb-4">Управление блоками услуги</h3>
+            <input type="hidden" id="service_blocks_service_id" />
+            
+            <div class="mb-6">
+                <h4 class="font-semibold mb-3">Добавить блок</h4>
+                <form id="serviceBlockForm">
+                    <div class="form-control mb-4">
+                        <label class="label">
+                            <span class="label-text">Название блока *</span>
+                        </label>
+                        <input type="text" id="block_title" class="input input-bordered" required />
+                    </div>
+                    
+                    <div class="form-control mb-4">
+                        <label class="label">
+                            <span class="label-text">Описание блока *</span>
+                        </label>
+                        <textarea id="block_content" class="textarea textarea-bordered" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-control mb-4">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">С подложкой</span>
+                            <input type="checkbox" id="block_has_background" class="checkbox" />
+                        </label>
+                    </div>
+                    
+                    <div class="form-control mb-4">
+                        <label class="label">
+                            <span class="label-text">Порядок</span>
+                        </label>
+                        <input type="number" id="block_display_order" class="input input-bordered" value="0" />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Добавить блок</button>
+                </form>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div>
+                <h4 class="font-semibold mb-3">Список блоков</h4>
+                <div id="service_blocks_list" class="space-y-4">
+                    <!-- Блоки будут загружены через JavaScript -->
+                </div>
+            </div>
+            
+            <div class="modal-action">
+                <button type="button" class="btn btn-outline" data-service-blocks-close>Закрыть</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+    
     <script>
+        // CSRF токен для защиты от CSRF атак
+        const CSRF_TOKEN = '<?php echo generateCsrfToken(); ?>';
+        
+        // Функция для добавления CSRF токена в FormData
+        function appendCsrfToken(formData) {
+            formData.append('csrf_token', CSRF_TOKEN);
+            return formData;
+        }
+        
         // Инициализация CKEditor для редактирования контента
         let editorInstance = null;
         let editEditorInstance = null;
@@ -965,6 +1187,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             if (file) {
                 const formData = new FormData();
                 formData.append('logo', file);
+                appendCsrfToken(formData);
                 
                 fetch('api/upload_logo.php', {
                     method: 'POST',
@@ -997,6 +1220,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             if (file) {
                 const formData = new FormData();
                 formData.append('logo', file);
+                appendCsrfToken(formData);
                 
                 fetch('api/upload_logo.php', {
                     method: 'POST',
@@ -1028,6 +1252,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             if (file) {
                 const formData = new FormData();
                 formData.append('logo', file);
+                appendCsrfToken(formData);
                 
                 fetch('api/upload_logo.php', {
                     method: 'POST',
@@ -1076,6 +1301,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             formData.append('tags', document.querySelector('#projectForm input[name="tags"]').value);
             formData.append('website', document.querySelector('#projectForm input[name="website"]')?.value || '');
             formData.append('display_order', document.querySelector('#projectForm input[name="display_order"]').value || '0');
+            appendCsrfToken(formData);
             
             fetch('api/projects.php', {
                 method: 'POST',
@@ -1123,6 +1349,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             formData.append('website', document.getElementById('edit_project_website').value || '');
             formData.append('subtitle', document.getElementById('edit_project_subtitle').value || '');
             formData.append('display_order', document.getElementById('edit_project_display_order').value || '0');
+            appendCsrfToken(formData);
             
             fetch('api/projects.php', {
                 method: 'POST',
@@ -1169,6 +1396,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             formData.append('tags', document.querySelector('#editProjectPageForm input[name="tags"]').value);
             formData.append('website', document.querySelector('#editProjectPageForm input[name="website"]')?.value || '');
             formData.append('display_order', document.querySelector('#editProjectPageForm input[name="display_order"]').value || '0');
+            appendCsrfToken(formData);
             
             fetch('api/projects.php', {
                 method: 'POST',
@@ -1414,6 +1642,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             const formData = new FormData();
             formData.append('action', 'delete');
             formData.append('id', id);
+            appendCsrfToken(formData);
             
             fetch('api/pages.php', {
                 method: 'POST',
@@ -1443,6 +1672,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             }
             
             const formData = new FormData(this);
+            appendCsrfToken(formData);
             
             fetch('api/pages.php', {
                 method: 'POST',
@@ -1473,6 +1703,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             }
             
             const formData = new FormData(this);
+            appendCsrfToken(formData);
             
             fetch('api/pages.php', {
                 method: 'POST',
@@ -1504,6 +1735,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
 
                 const formData = new FormData(vacancyForm);
                 formData.append('action', 'add');
+                appendCsrfToken(formData);
 
                 try {
                     const res = await fetch('api/vacancies.php', { method: 'POST', body: formData });
@@ -1535,6 +1767,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 e.preventDefault();
                 const fd = new FormData(editVacancyForm);
                 fd.append('action', 'edit');
+                appendCsrfToken(fd);
                 try {
                     const res = await fetch('api/vacancies.php', { method: 'POST', body: fd });
                     const data = await res.json();
@@ -1562,6 +1795,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             const formData = new FormData();
             formData.append('action', 'delete');
             formData.append('id', id);
+            appendCsrfToken(formData);
 
             try {
                 const res = await fetch('api/vacancies.php', { method: 'POST', body: formData });
@@ -1587,6 +1821,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
 
                 const fd = new FormData();
                 fd.append('image', file);
+                appendCsrfToken(fd);
 
                 try {
                     const res = await fetch('api/upload_blog_image.php', { method: 'POST', body: fd });
@@ -1631,6 +1866,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 const fd = new FormData(blogPostForm);
                 fd.append('action', 'add');
                 fd.set('image_path', imagePath);
+                appendCsrfToken(fd);
 
                 try {
                     const res = await fetch('api/blog_posts.php', { method: 'POST', body: fd });
@@ -1668,6 +1904,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
 
                 const fd = new FormData();
                 fd.append('image', file);
+                appendCsrfToken(fd);
 
                 try {
                     const res = await fetch('api/upload_blog_image.php', { method: 'POST', body: fd });
@@ -1706,6 +1943,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 fd.append('action', 'edit');
                 fd.set('image_path', imagePath);
                 fd.set('id', document.getElementById('edit_blog_id').value);
+                appendCsrfToken(fd);
 
                 try {
                     const res = await fetch('api/blog_posts.php', { method: 'POST', body: fd });
@@ -1734,6 +1972,7 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
             const fd = new FormData();
             fd.append('action', 'delete');
             fd.append('id', id);
+            appendCsrfToken(fd);
 
             try {
                 const res = await fetch('api/blog_posts.php', { method: 'POST', body: fd });
@@ -1747,6 +1986,300 @@ $blogPosts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id
                 alert('Ошибка: ' + err);
             }
         });
+        
+        // =========================
+        // УСЛУГИ
+        // =========================
+        const serviceForm = document.getElementById('serviceForm');
+        if (serviceForm) {
+            serviceForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(serviceForm);
+                formData.append('action', 'add');
+                appendCsrfToken(formData);
+                
+                try {
+                    const res = await fetch('api/services.php', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('Услуга добавлена!');
+                        location.reload();
+                    } else {
+                        alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
+                    }
+                } catch (err) {
+                    alert('Ошибка: ' + err);
+                }
+            });
+        }
+        
+        // Редактирование услуги
+        window.editService = function(service) {
+            document.getElementById('edit_service_id').value = service.id;
+            document.getElementById('edit_service_title').value = service.title || '';
+            document.getElementById('edit_service_slug').value = service.slug || '';
+            document.getElementById('edit_service_subtitle').value = service.subtitle || '';
+            document.getElementById('edit_service_detail_subtitle').value = service.detail_subtitle || '';
+            document.getElementById('edit_service_display_order').value = service.display_order || 0;
+            document.getElementById('editServiceModal').showModal();
+        };
+        
+        const editServiceForm = document.getElementById('editServiceForm');
+        if (editServiceForm) {
+            editServiceForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const fd = new FormData(editServiceForm);
+                fd.append('action', 'edit');
+                appendCsrfToken(fd);
+                try {
+                    const res = await fetch('api/services.php', { method: 'POST', body: fd });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('Услуга обновлена!');
+                        location.reload();
+                    } else {
+                        alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
+                    }
+                } catch (err) {
+                    alert('Ошибка: ' + err);
+                }
+            });
+        }
+        
+        // Удаление услуги
+        document.addEventListener('click', async function(e) {
+            const btn = e.target.closest('[data-service-delete]');
+            if (!btn) return;
+            e.preventDefault();
+            
+            const id = btn.getAttribute('data-service-delete');
+            if (!id) return;
+            if (!confirm('Удалить эту услугу? Все блоки также будут удалены.')) return;
+            
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', id);
+            appendCsrfToken(formData);
+            
+            try {
+                const res = await fetch('api/services.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
+                }
+            } catch (err) {
+                alert('Ошибка: ' + err);
+            }
+        });
+        
+        // Управление блоками услуги
+        let serviceBlocksEditor = null;
+        let currentServiceId = null;
+        let editingBlockId = null;
+        
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.js-open-service-blocks');
+            if (!btn) return;
+            e.preventDefault();
+            
+            currentServiceId = btn.getAttribute('data-service-id');
+            if (!currentServiceId) return;
+            
+            document.getElementById('service_blocks_service_id').value = currentServiceId;
+            document.getElementById('serviceBlocksModal').showModal();
+            
+            // Загружаем блоки
+            loadServiceBlocks(currentServiceId);
+            
+            // Инициализируем редактор
+            setTimeout(function() {
+                if (document.getElementById('block_content')) {
+                    if (serviceBlocksEditor) {
+                        serviceBlocksEditor.destroy();
+                    }
+                    serviceBlocksEditor = CKEDITOR.replace('block_content');
+                }
+            }, 100);
+        });
+        
+        // Закрытие модального окна блоков
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-service-blocks-close]')) {
+                document.getElementById('serviceBlocksModal').close();
+                if (serviceBlocksEditor) {
+                    serviceBlocksEditor.destroy();
+                    serviceBlocksEditor = null;
+                }
+                editingBlockId = null;
+                const form = document.getElementById('serviceBlockForm');
+                if (form) {
+                    form.reset();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.textContent = 'Добавить блок';
+                }
+            }
+        });
+        
+        // Загрузка блоков услуги
+        async function loadServiceBlocks(serviceId) {
+            try {
+                const res = await fetch(`api/service_blocks.php?action=get&service_id=${serviceId}`);
+                const data = await res.json();
+                if (data.success) {
+                    renderServiceBlocks(data.blocks);
+                } else {
+                    alert('Ошибка загрузки блоков: ' + (data.message || 'Неизвестная ошибка'));
+                }
+            } catch (err) {
+                alert('Ошибка: ' + err);
+            }
+        }
+        
+        // Отображение блоков
+        function renderServiceBlocks(blocks) {
+            const container = document.getElementById('service_blocks_list');
+            if (!blocks || blocks.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">Блоков пока нет.</p>';
+                return;
+            }
+            
+            container.innerHTML = blocks.map(block => `
+                <div class="card bg-base-100 border border-gray-200">
+                    <div class="card-body">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h5 class="font-semibold">${escapeHtml(block.title)}</h5>
+                                <div class="mt-2 text-sm text-gray-600">${block.has_background ? '<span class="badge badge-info">С подложкой</span>' : '<span class="badge badge-outline">Без подложки</span>'}</div>
+                                <div class="mt-2 text-xs text-gray-500">Порядок: ${block.display_order}</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline" onclick="editServiceBlock(${block.id})">Редактировать</button>
+                                <button type="button" class="btn btn-sm btn-error" onclick="deleteServiceBlock(${block.id})">Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Добавление/редактирование блока
+        const serviceBlockForm = document.getElementById('serviceBlockForm');
+        if (serviceBlockForm) {
+            serviceBlockForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!currentServiceId) {
+                    alert('Ошибка: не указан ID услуги');
+                    return;
+                }
+                
+                if (serviceBlocksEditor) {
+                    serviceBlocksEditor.updateElement();
+                }
+                
+                const title = document.getElementById('block_title').value.trim();
+                const content = document.getElementById('block_content').value.trim();
+                const hasBackground = document.getElementById('block_has_background').checked ? 1 : 0;
+                const displayOrder = parseInt(document.getElementById('block_display_order').value) || 0;
+                
+                if (!title || !content) {
+                    alert('Заполните название и описание блока');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('action', editingBlockId ? 'edit' : 'add');
+                if (editingBlockId) {
+                    formData.append('id', editingBlockId);
+                } else {
+                    formData.append('service_id', currentServiceId);
+                }
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('has_background', hasBackground);
+                formData.append('display_order', displayOrder);
+                appendCsrfToken(formData);
+                
+                try {
+                    const res = await fetch('api/service_blocks.php', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert(editingBlockId ? 'Блок обновлен!' : 'Блок добавлен!');
+                        serviceBlockForm.reset();
+                        editingBlockId = null;
+                        const submitBtn = serviceBlockForm.querySelector('button[type="submit"]');
+                        if (submitBtn) submitBtn.textContent = 'Добавить блок';
+                        if (serviceBlocksEditor) {
+                            serviceBlocksEditor.setData('');
+                        }
+                        loadServiceBlocks(currentServiceId);
+                    } else {
+                        alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
+                    }
+                } catch (err) {
+                    alert('Ошибка: ' + err);
+                }
+            });
+        }
+        
+        // Редактирование блока
+        window.editServiceBlock = async function(blockId) {
+            try {
+                const res = await fetch(`api/service_blocks.php?action=get&service_id=${currentServiceId}`);
+                const data = await res.json();
+                if (data.success) {
+                    const block = data.blocks.find(b => b.id == blockId);
+                    if (block) {
+                        document.getElementById('block_title').value = block.title;
+                        if (serviceBlocksEditor) {
+                            serviceBlocksEditor.setData(block.content);
+                        }
+                        document.getElementById('block_has_background').checked = block.has_background == 1;
+                        document.getElementById('block_display_order').value = block.display_order;
+                        
+                        // Устанавливаем режим редактирования
+                        editingBlockId = blockId;
+                        const submitBtn = document.getElementById('serviceBlockForm').querySelector('button[type="submit"]');
+                        if (submitBtn) submitBtn.textContent = 'Сохранить изменения';
+                    }
+                }
+            } catch (err) {
+                alert('Ошибка: ' + err);
+            }
+        };
+        
+        // Удаление блока
+        window.deleteServiceBlock = async function(blockId) {
+            if (!confirm('Удалить этот блок?')) return;
+            
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', blockId);
+            appendCsrfToken(formData);
+            
+            try {
+                const res = await fetch('api/service_blocks.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Блок удален!');
+                    loadServiceBlocks(currentServiceId);
+                } else {
+                    alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
+                }
+            } catch (err) {
+                alert('Ошибка: ' + err);
+            }
+        };
+        
+        // Функция для экранирования HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
         
         // Инициализация редактора при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {

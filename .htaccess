@@ -1,3 +1,9 @@
+# Защита файла базы данных от прямого доступа
+<Files "database.db">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
 # Для Apache - перенаправление несуществующих файлов проектов и услуг
 RewriteEngine On
 
@@ -12,3 +18,9 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} ^/projects/(project-|opharme) [NC]
 RewriteRule ^projects/(.*)$ project_handler.php?file=$1 [L,QSA]
+
+# Если файл не существует и это услуга в папке services/, проверяем БД
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/services/(.+)\.php$ [NC]
+RewriteRule ^services/(.*)$ service_handler.php?file=$1 [L,QSA]

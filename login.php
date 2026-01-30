@@ -13,11 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    if (login($username, $password)) {
+    $result = login($username, $password);
+    if ($result['success']) {
         header('Location: admin.php');
         exit;
     } else {
-        $error = 'Неверный логин или пароль';
+        $error = $result['message'] ?? 'Неверный логин или пароль';
     }
 }
 ?>
@@ -80,9 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </form>
                 
-                <div class="mt-4 text-sm text-gray-500">
-                    <p>По умолчанию: логин <strong>admin</strong>, пароль <strong>admin123</strong></p>
-                </div>
             </div>
         </div>
     </div>

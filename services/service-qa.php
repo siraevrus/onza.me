@@ -1,32 +1,42 @@
 <?php
 /**
  * Страница: service-qa
- * Контент загружается из базы данных через CMS
+ * Загружает услугу из БД
  */
 require_once __DIR__ . '/../config/database.php';
 
-function getPageBySlug($slug) {
-    $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM pages WHERE slug = ? AND is_active = 1");
-    $stmt->execute([$slug]);
-    return $stmt->fetch();
-}
-
+$db = getDB();
 $slug = 'service-qa';
-$page = getPageBySlug($slug);
 
-if ($page) {
-    $pageTitle = htmlspecialchars($page['title']);
-    $metaDescription = htmlspecialchars($page['meta_description'] ?? '');
-    $pageContent = $page['content'];
-    include __DIR__ . '/../templates/base.php';
+// Ищем услугу по slug
+$stmt = $db->prepare("SELECT * FROM services WHERE slug = ? AND is_active = 1");
+$stmt->execute([$slug]);
+$service = $stmt->fetch();
+
+if ($service) {
+    // Загружаем блоки услуги
+    try {
+        $blocksStmt = $db->prepare("SELECT * FROM service_blocks WHERE service_id = ? ORDER BY display_order ASC, id ASC");
+        $blocksStmt->execute([$service['id']]);
+        $blocks = $blocksStmt->fetchAll();
+    } catch (Exception $e) {
+        // Если таблицы еще нет или ошибка, создаем пустой массив
+        $blocks = [];
+    }
+    
+    // Убеждаемся, что переменная определена
+    if (!isset($blocks)) {
+        $blocks = [];
+    }
+    
+    include __DIR__ . '/../templates/service_page.php';
 } else {
-    // Если страница не найдена в БД, пробуем загрузить статический файл
+    // Если услуга не найдена в БД, пробуем загрузить статический файл
     $staticFile = __DIR__ . '/../service-qa.html';
     if (file_exists($staticFile)) {
         include $staticFile;
     } else {
         http_response_code(404);
-        echo '<!doctype html><html><head><title>404 - Страница не найдена</title></head><body><h1>404 - Страница не найдена</h1><p><a href="/index.php">Вернуться на главную</a></p></body></html>';
+        include __DIR__ . '/../404.php';
     }
 }
