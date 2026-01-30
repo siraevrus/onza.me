@@ -148,5 +148,11 @@ if ($page) {
     if (strpos($html, '<!--BLOG_LIST-->') !== false) {
         $html = str_replace('<!--BLOG_LIST-->', $blogListHtml, $html);
     }
+    
+    // Заменяем футер на динамический
+    $GLOBALS['_footer_functions_only'] = true;
+    require_once __DIR__ . '/templates/footer.php';
+    $html = replaceFooterInHtml($html);
+    
     echo $html;
 }

@@ -92,6 +92,11 @@ if ($page) {
         $indexContent = str_replace('<!--BLOG_BLOCK-->', trim(renderBlogBlockHtml($blogPosts)), $indexContent);
     }
     
+    // Заменяем футер на динамический
+    $GLOBALS['_footer_functions_only'] = true;
+    require_once __DIR__ . '/templates/footer.php';
+    $indexContent = replaceFooterInHtml($indexContent);
+    
     echo $indexContent;
 }
 ?>

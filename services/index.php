@@ -25,6 +25,9 @@ function renderServicesListHtml(array $services): string {
             <div class="card card-zoom">
                 <div class="card-body">
                     <h2 class="card-title"><?php echo htmlspecialchars($service['title']); ?></h2>
+                    <?php if (!empty($service['subtitle'])): ?>
+                        <p class="mt-2 text-gray-600"><?php echo htmlspecialchars($service['subtitle']); ?></p>
+                    <?php endif; ?>
                     <div class="mt-3">
                         <a href="/services/<?php echo htmlspecialchars($service['slug']); ?>.php" class="link link-hover">Подробнее ↗</a>
                     </div>
@@ -136,6 +139,11 @@ if ($page) {
         // ВАЖНО: удаляем только секцию, где находится этот заголовок (не захватываем соседние секции).
         $fastStartPattern = '/<section\\b[^>]*>(?:(?!<\\/section>).)*?<h2[^>]*>\\s*Нужен\\s+быстрый\\s+старт\\??\\s*<\\/h2>(?:(?!<\\/section>).)*?<\\/section>/uis';
         $html = preg_replace($fastStartPattern, '', $html, 1);
+
+        // Заменяем футер на динамический
+        $GLOBALS['_footer_functions_only'] = true;
+        require_once __DIR__ . '/../templates/footer.php';
+        $html = replaceFooterInHtml($html);
 
         // Добавляем общий CTA "Готовы обсудить ваш проект?" над футером (если его ещё нет)
         if (strpos($html, 'data-cta-wave') === false && stripos($html, 'Готовы обсудить ваш проект?') === false) {

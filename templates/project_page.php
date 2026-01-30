@@ -174,41 +174,7 @@
 
     <?php include __DIR__ . '/cta.php'; ?>
 
-    <footer class="bg-white">
-        <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">
-            <div>
-                <img src="/assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
-                <div class="mt-2">© Onza.me</div>
-                <div class="mt-1">Все права защищены</div>
-            </div>
-            <div>
-                <div class="font-semibold">Услуги</div>
-                <ul class="mt-2 space-y-1">
-                    <li><a class="link link-hover" href="../services/service-mobile.php">Мобильные приложения</a></li>
-                    <li><a class="link link-hover" href="../services/service-design.php">Дизайн интерфейсов</a></li>
-                    <li><a class="link link-hover" href="../services/service-backend.php">Backend‑разработка</a></li>
-                    <li><a class="link link-hover" href="../services/service-support.php">Техническая поддержка</a></li>
-                    <li><a class="link link-hover" href="../services/service-analytics.php">Аналитика и консалтинг</a></li>
-                </ul>
-            </div>
-            <div>
-                <div><a class="link link-hover" href="tel:+79956215202">8 995 6215202</a></div>
-                <div class="mt-1"><a class="link link-hover" href="mailto:ruslan@onza.me">ruslan@onza.me</a></div>
-                <div class="mt-1"><a class="link link-hover" href="https://t.me/siraev" target="_blank">t.me/siraev</a></div>
-            </div>
-            <div>
-                <div class="font-semibold">Меню</div>
-                <ul class="mt-2 space-y-1">
-                    <li><a class="link link-hover" href="/index.php">Главная</a></li>
-                    <li><a class="link link-hover" href="/services">Услуги</a></li>
-                    <li><a class="link link-hover" href="/projects">Проекты</a></li>
-                    <li><a class="link link-hover" href="/contacts.php">Контакты</a></li>
-                    <li><a class="link link-hover" href="/vacancies.php">Вакансии</a></li>
-                    <li><a class="link link-hover" href="/blog.php">Блог</a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/footer.php'; ?>
     
     <?php if (!empty($galleryImages)): ?>
     <!-- Fullscreen overlay for gallery -->

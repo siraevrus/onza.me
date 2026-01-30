@@ -59,20 +59,28 @@
         }
         
         if (is_array($blocks) && !empty($blocks)): 
-            $isFirstBlockWithBackground = true;
+            // Разделяем блоки на те, что с подложкой и без
+            $blocksWithBg = [];
+            $blocksWithoutBg = [];
+            
             foreach ($blocks as $block): 
                 $hasBackground = isset($block['has_background']) ? (int)$block['has_background'] : 0;
-                $blockTitle = htmlspecialchars($block['title'] ?? '');
-                $blockContent = $block['content'] ?? '';
-                
-                if ($hasBackground == 1): 
-                    // Для первого блока с подложкой: верхний отступ больше (48px), для остальных - добавляем margin-top 25px
-                    $paddingClass = $isFirstBlockWithBackground ? 'pt-12 pb-0' : 'pt-0 pb-0';
-                    $marginTop = $isFirstBlockWithBackground ? '' : 'style="margin-top: 25px;"';
-                    $isFirstBlockWithBackground = false;
+                if ($hasBackground == 1) {
+                    $blocksWithBg[] = $block;
+                } else {
+                    $blocksWithoutBg[] = $block;
+                }
+            endforeach;
+            
+            // Выводим блоки с подложкой в 2 колонки
+            if (!empty($blocksWithBg)): 
         ?>
-                    <!-- Блок с подложкой (белая карточка) -->
-                    <section class="container mx-auto max-w-7xl px-4 <?php echo $paddingClass; ?>" <?php echo $marginTop; ?>>
+            <section class="container mx-auto max-w-7xl px-4 pt-12 pb-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <?php foreach ($blocksWithBg as $block): 
+                        $blockTitle = htmlspecialchars($block['title'] ?? '');
+                        $blockContent = $block['content'] ?? '';
+                    ?>
                         <div class="bg-white rounded-2xl border border-black/10 p-8 md:p-10">
                             <?php if (!empty($blockTitle)): ?>
                                 <h2 class="text-2xl font-bold mb-4"><?php echo $blockTitle; ?></h2>
@@ -81,19 +89,27 @@
                                 <?php echo $blockContent; ?>
                             </div>
                         </div>
-                    </section>
-        <?php else: ?>
-                    <!-- Блок без подложки (белый фон) -->
-                    <section class="container mx-auto max-w-7xl px-4 py-12">
-                        <?php if (!empty($blockTitle)): ?>
-                            <h2 class="text-2xl font-bold mb-4"><?php echo $blockTitle; ?></h2>
-                        <?php endif; ?>
-                        <div class="prose prose-lg max-w-none">
-                            <?php echo $blockContent; ?>
-                        </div>
-                    </section>
+                    <?php endforeach; ?>
+                </div>
+            </section>
         <?php 
-                endif;
+            endif;
+            
+            // Выводим блоки без подложки (полная ширина)
+            foreach ($blocksWithoutBg as $block): 
+                $blockTitle = htmlspecialchars($block['title'] ?? '');
+                $blockContent = $block['content'] ?? '';
+        ?>
+            <!-- Блок без подложки (белый фон) -->
+            <section class="container mx-auto max-w-7xl px-4 py-12">
+                <?php if (!empty($blockTitle)): ?>
+                    <h2 class="text-2xl font-bold mb-4"><?php echo $blockTitle; ?></h2>
+                <?php endif; ?>
+                <div class="prose prose-lg max-w-none">
+                    <?php echo $blockContent; ?>
+                </div>
+            </section>
+        <?php 
             endforeach;
         endif; 
         ?>
@@ -101,42 +117,7 @@
 
     <?php include __DIR__ . '/cta.php'; ?>
 
-    <!-- Footer -->
-    <footer class="bg-white">
-        <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">
-            <div>
-                <img src="/assets/image/logo.svg" alt="ONZA.ME" class="logo-img mb-2" />
-                <div class="mt-2">© Onza.me</div>
-                <div class="mt-1">Все права защищены</div>
-            </div>
-            <div>
-                <div class="font-semibold">Услуги</div>
-                <ul class="mt-2 space-y-1">
-                    <li><a class="link link-hover" href="/services/service-mobile.php">Мобильные приложения</a></li>
-                    <li><a class="link link-hover" href="/services/service-design.php">Дизайн интерфейсов</a></li>
-                    <li><a class="link link-hover" href="/services/service-backend.php">Backend‑разработка</a></li>
-                    <li><a class="link link-hover" href="/services/service-support.php">Техническая поддержка</a></li>
-                    <li><a class="link link-hover" href="/services/service-analytics.php">Аналитика и консалтинг</a></li>
-                </ul>
-            </div>
-            <div>
-                <div><a class="link link-hover" href="tel:+79956215202">8 995 6215202</a></div>
-                <div class="mt-1"><a class="link link-hover" href="mailto:ruslan@onza.me">ruslan@onza.me</a></div>
-                <div class="mt-1"><a class="link link-hover" href="https://t.me/siraev" target="_blank">t.me/siraev</a></div>
-            </div>
-            <div>
-                <div class="font-semibold">Меню</div>
-                <ul class="mt-2 space-y-1">
-                    <li><a class="link link-hover" href="/index.php">Главная</a></li>
-                    <li><a class="link link-hover" href="/services">Услуги</a></li>
-                    <li><a class="link link-hover" href="/projects">Проекты</a></li>
-                    <li><a class="link link-hover" href="/contacts.php">Контакты</a></li>
-                    <li><a class="link link-hover" href="/vacancies.php">Вакансии</a></li>
-                    <li><a class="link link-hover" href="/blog.php">Блог</a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/footer.php'; ?>
 
     <script src="/assets/hero-anim.js" defer></script>
 </body>

@@ -58,6 +58,11 @@ if ($page) {
     </nav>';
             $html = preg_replace('/(<main[^>]*>)/', '$1' . $breadcrumbs, $html, 1);
         }
+        // Заменяем футер на динамический
+        $GLOBALS['_footer_functions_only'] = true;
+        require_once __DIR__ . '/templates/footer.php';
+        $html = replaceFooterInHtml($html);
+        
         echo $html;
     } else {
         http_response_code(404);

@@ -46,6 +46,11 @@ if ($page) {
             $html = preg_replace('/(<main[^>]*>)/', '$1' . $breadcrumbs, $html, 1);
         }
 
+        // Заменяем футер на динамический
+        $GLOBALS['_footer_functions_only'] = true;
+        require_once __DIR__ . '/templates/footer.php';
+        $html = replaceFooterInHtml($html);
+
         // Добавляем общий CTA "Готовы обсудить ваш проект?" над футером (если его ещё нет)
         if (strpos($html, 'data-cta-wave') === false && stripos($html, 'Готовы обсудить ваш проект?') === false) {
             ob_start();
