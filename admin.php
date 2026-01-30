@@ -7,6 +7,8 @@ $message = '';
 $messageType = '';
 $activeTab = $_GET['tab'] ?? 'projects';
 $editProjectId = isset($_GET['edit']) ? intval($_GET['edit']) : 0;
+// Для услуг используем отдельный параметр (но совместим с ?edit= при tab=services)
+$editServiceId = ($activeTab === 'services' && isset($_GET['edit'])) ? intval($_GET['edit']) : 0;
 
 // Получаем проект для редактирования, если указан ID
 $editProject = null;
@@ -17,6 +19,19 @@ if ($editProjectId > 0 && $activeTab === 'projects') {
     if (!$editProject) {
         $editProjectId = 0;
         $message = 'Проект не найден';
+        $messageType = 'error';
+    }
+}
+
+// Получаем услугу для редактирования, если указан ID
+$editService = null;
+if ($editServiceId > 0 && $activeTab === 'services') {
+    $stmt = $db->prepare("SELECT * FROM services WHERE id = ?");
+    $stmt->execute([$editServiceId]);
+    $editService = $stmt->fetch();
+    if (!$editService) {
+        $editServiceId = 0;
+        $message = 'Услуга не найдена';
         $messageType = 'error';
     }
 }
@@ -599,96 +614,168 @@ $services = $db->query("SELECT * FROM services ORDER BY display_order ASC, id DE
                 </div>
             </div>
         <?php elseif ($activeTab === 'services'): ?>
-            <!-- Раздел услуг -->
-            <div class="card bg-white mb-6">
-                <div class="card-body">
-                    <h2 class="card-title text-xl mb-4">Добавить услугу</h2>
-                    <form id="serviceForm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Заголовок *</span>
-                                </label>
-                                <input type="text" name="title" class="input input-bordered" required />
-                            </div>
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Slug *</span>
-                                    <span class="label-text-alt">Например: service-analytics</span>
-                                </label>
-                                <input type="text" name="slug" class="input input-bordered" placeholder="service-analytics" required />
-                            </div>
+            <?php if ($editServiceId > 0 && $editService): ?>
+                <!-- Страница редактирования услуги -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold">Редактировать услугу</h2>
+                        <div class="flex gap-2">
+                            <button type="button"
+                                    class="btn btn-info js-open-service-blocks"
+                                    data-service-id="<?php echo (int)$editService['id']; ?>">
+                                Блоки
+                            </button>
+                            <a href="?tab=services" class="btn btn-outline">← Назад к списку</a>
                         </div>
+                    </div>
 
-                        <div class="form-control mb-4">
-                            <label class="label">
-                                <span class="label-text">Подзаголовок для превью *</span>
-                                <span class="label-text-alt">Отображается в списке услуг</span>
-                            </label>
-                            <textarea name="subtitle" class="textarea textarea-bordered" rows="2" required></textarea>
-                        </div>
+                    <div class="card bg-white">
+                        <div class="card-body">
+                            <form id="editServicePageForm">
+                                <input type="hidden" name="action" value="edit" />
+                                <input type="hidden" name="id" value="<?php echo (int)$editService['id']; ?>" />
 
-                        <div class="form-control mb-4">
-                            <label class="label">
-                                <span class="label-text">Детальный подзаголовок</span>
-                                <span class="label-text-alt">Отображается на детальной странице услуги</span>
-                            </label>
-                            <textarea name="detail_subtitle" class="textarea textarea-bordered" rows="2"></textarea>
-                        </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Заголовок *</span>
+                                        </label>
+                                        <input type="text" name="title" class="input input-bordered" required
+                                               value="<?php echo htmlspecialchars($editService['title'] ?? ''); ?>" />
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text">Slug *</span>
+                                        </label>
+                                        <input type="text" name="slug" class="input input-bordered" required
+                                               value="<?php echo htmlspecialchars($editService['slug'] ?? ''); ?>" />
+                                    </div>
+                                </div>
 
-                        <div class="form-control mb-4">
-                            <label class="label">
-                                <span class="label-text">Порядок отображения</span>
-                            </label>
-                            <input type="number" name="display_order" class="input input-bordered" value="0" />
-                        </div>
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Подзаголовок для превью *</span>
+                                        <span class="label-text-alt">Отображается в списке услуг</span>
+                                    </label>
+                                    <textarea name="subtitle" class="textarea textarea-bordered" rows="2" required><?php echo htmlspecialchars($editService['subtitle'] ?? ''); ?></textarea>
+                                </div>
 
-                        <div class="form-control">
-                            <button type="submit" class="btn btn-primary">Добавить услугу</button>
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Детальный подзаголовок</span>
+                                        <span class="label-text-alt">Отображается на детальной странице услуги</span>
+                                    </label>
+                                    <textarea name="detail_subtitle" class="textarea textarea-bordered" rows="2"><?php echo htmlspecialchars($editService['detail_subtitle'] ?? ''); ?></textarea>
+                                </div>
+
+                                <div class="form-control mb-4">
+                                    <label class="label">
+                                        <span class="label-text">Порядок отображения</span>
+                                    </label>
+                                    <input type="number" name="display_order" class="input input-bordered"
+                                           value="<?php echo (int)($editService['display_order'] ?? 0); ?>" />
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                    <a href="?tab=services" class="btn btn-outline">Отмена</a>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <!-- Раздел услуг -->
+                <div class="card bg-white mb-6">
+                    <div class="card-body">
+                        <h2 class="card-title text-xl mb-4">Добавить услугу</h2>
+                        <form id="serviceForm">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Заголовок *</span>
+                                    </label>
+                                    <input type="text" name="title" class="input input-bordered" required />
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Slug *</span>
+                                        <span class="label-text-alt">Например: service-analytics</span>
+                                    </label>
+                                    <input type="text" name="slug" class="input input-bordered" placeholder="service-analytics" required />
+                                </div>
+                            </div>
 
-            <div class="card bg-white">
-                <div class="card-body">
-                    <h2 class="card-title text-xl mb-4">Список услуг (<?php echo count($services); ?>)</h2>
-                    <?php if (empty($services)): ?>
-                        <p class="text-gray-500">Услуг пока нет.</p>
-                    <?php else: ?>
-                        <div class="overflow-x-auto">
-                            <table class="table table-zebra">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Заголовок</th>
-                                        <th>Slug</th>
-                                        <th>Подзаголовок</th>
-                                        <th>Порядок</th>
-                                        <th>Действия</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($services as $s): ?>
+                            <div class="form-control mb-4">
+                                <label class="label">
+                                    <span class="label-text">Подзаголовок для превью *</span>
+                                    <span class="label-text-alt">Отображается в списке услуг</span>
+                                </label>
+                                <textarea name="subtitle" class="textarea textarea-bordered" rows="2" required></textarea>
+                            </div>
+
+                            <div class="form-control mb-4">
+                                <label class="label">
+                                    <span class="label-text">Детальный подзаголовок</span>
+                                    <span class="label-text-alt">Отображается на детальной странице услуги</span>
+                                </label>
+                                <textarea name="detail_subtitle" class="textarea textarea-bordered" rows="2"></textarea>
+                            </div>
+
+                            <div class="form-control mb-4">
+                                <label class="label">
+                                    <span class="label-text">Порядок отображения</span>
+                                </label>
+                                <input type="number" name="display_order" class="input input-bordered" value="0" />
+                            </div>
+
+                            <div class="form-control">
+                                <button type="submit" class="btn btn-primary">Добавить услугу</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card bg-white">
+                    <div class="card-body">
+                        <h2 class="card-title text-xl mb-4">Список услуг (<?php echo count($services); ?>)</h2>
+                        <?php if (empty($services)): ?>
+                            <p class="text-gray-500">Услуг пока нет.</p>
+                        <?php else: ?>
+                            <div class="overflow-x-auto">
+                                <table class="table table-zebra">
+                                    <thead>
                                         <tr>
-                                            <td><?php echo (int)$s['id']; ?></td>
-                                            <td><strong><?php echo htmlspecialchars($s['title']); ?></strong></td>
-                                            <td><code><?php echo htmlspecialchars($s['slug']); ?></code></td>
-                                            <td><?php echo htmlspecialchars(mb_substr($s['subtitle'], 0, 50)); ?><?php echo mb_strlen($s['subtitle']) > 50 ? '…' : ''; ?></td>
-                                            <td><?php echo (int)$s['display_order']; ?></td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-outline" onclick="window.editService(<?php echo htmlspecialchars(json_encode($s)); ?>)">Редактировать</button>
-                                                <button type="button" class="btn btn-sm btn-info js-open-service-blocks" data-service-id="<?php echo (int)$s['id']; ?>">Блоки</button>
-                                                <button type="button" class="btn btn-sm btn-error" data-service-delete="<?php echo (int)$s['id']; ?>">Удалить</button>
-                                            </td>
+                                            <th>ID</th>
+                                            <th>Заголовок</th>
+                                            <th>Slug</th>
+                                            <th>Подзаголовок</th>
+                                            <th>Порядок</th>
+                                            <th>Действия</th>
                                         </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endif; ?>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($services as $s): ?>
+                                            <tr>
+                                                <td><?php echo (int)$s['id']; ?></td>
+                                                <td><strong><?php echo htmlspecialchars($s['title']); ?></strong></td>
+                                                <td><code><?php echo htmlspecialchars($s['slug']); ?></code></td>
+                                                <td><?php echo htmlspecialchars(mb_substr($s['subtitle'], 0, 50)); ?><?php echo mb_strlen($s['subtitle']) > 50 ? '…' : ''; ?></td>
+                                                <td><?php echo (int)$s['display_order']; ?></td>
+                                                <td class="flex flex-wrap gap-2">
+                                                    <a href="?tab=services&edit=<?php echo (int)$s['id']; ?>" class="btn btn-sm btn-outline">Редактировать</a>
+                                                    <button type="button" class="btn btn-sm btn-info js-open-service-blocks" data-service-id="<?php echo (int)$s['id']; ?>">Блоки</button>
+                                                    <button type="button" class="btn btn-sm btn-error" data-service-delete="<?php echo (int)$s['id']; ?>">Удалить</button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         <?php else: ?>
             <div class="alert alert-warning">
                 <span>Неизвестная вкладка.</span>
@@ -1000,61 +1087,6 @@ $services = $db->query("SELECT * FROM services ORDER BY display_order ASC, id DE
 
                 <div class="modal-action">
                     <button type="button" onclick="document.getElementById('editVacancyModal').close()" class="btn btn-outline">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
-                </div>
-            </form>
-        </div>
-        <form method="dialog" class="modal-backdrop">
-            <button>close</button>
-        </form>
-    </dialog>
-    
-    <!-- Модальное окно для редактирования услуги -->
-    <dialog id="editServiceModal" class="modal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Редактировать услугу</h3>
-            <form id="editServiceForm">
-                <input type="hidden" name="action" value="edit" />
-                <input type="hidden" name="id" id="edit_service_id" />
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Заголовок *</span>
-                        </label>
-                        <input type="text" name="title" id="edit_service_title" class="input input-bordered" required />
-                    </div>
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Slug *</span>
-                        </label>
-                        <input type="text" name="slug" id="edit_service_slug" class="input input-bordered" required />
-                    </div>
-                </div>
-                
-                <div class="form-control mb-4">
-                    <label class="label">
-                        <span class="label-text">Подзаголовок для превью *</span>
-                    </label>
-                    <textarea name="subtitle" id="edit_service_subtitle" class="textarea textarea-bordered" rows="2" required></textarea>
-                </div>
-                
-                <div class="form-control mb-4">
-                    <label class="label">
-                        <span class="label-text">Детальный подзаголовок</span>
-                    </label>
-                    <textarea name="detail_subtitle" id="edit_service_detail_subtitle" class="textarea textarea-bordered" rows="2"></textarea>
-                </div>
-                
-                <div class="form-control mb-4">
-                    <label class="label">
-                        <span class="label-text">Порядок отображения</span>
-                    </label>
-                    <input type="number" name="display_order" id="edit_service_display_order" class="input input-bordered" />
-                </div>
-                
-                <div class="modal-action">
-                    <button type="button" onclick="document.getElementById('editServiceModal').close()" class="btn btn-outline">Отмена</button>
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </div>
             </form>
@@ -2014,22 +2046,12 @@ $services = $db->query("SELECT * FROM services ORDER BY display_order ASC, id DE
             });
         }
         
-        // Редактирование услуги
-        window.editService = function(service) {
-            document.getElementById('edit_service_id').value = service.id;
-            document.getElementById('edit_service_title').value = service.title || '';
-            document.getElementById('edit_service_slug').value = service.slug || '';
-            document.getElementById('edit_service_subtitle').value = service.subtitle || '';
-            document.getElementById('edit_service_detail_subtitle').value = service.detail_subtitle || '';
-            document.getElementById('edit_service_display_order').value = service.display_order || 0;
-            document.getElementById('editServiceModal').showModal();
-        };
-        
-        const editServiceForm = document.getElementById('editServiceForm');
-        if (editServiceForm) {
-            editServiceForm.addEventListener('submit', async function(e) {
+        // Редактирование услуги (на отдельной странице)
+        const editServicePageForm = document.getElementById('editServicePageForm');
+        if (editServicePageForm) {
+            editServicePageForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const fd = new FormData(editServiceForm);
+                const fd = new FormData(editServicePageForm);
                 fd.append('action', 'edit');
                 appendCsrfToken(fd);
                 try {
@@ -2037,7 +2059,7 @@ $services = $db->query("SELECT * FROM services ORDER BY display_order ASC, id DE
                     const data = await res.json();
                     if (data.success) {
                         alert('Услуга обновлена!');
-                        location.reload();
+                        window.location.href = '?tab=services';
                     } else {
                         alert('Ошибка: ' + (data.message || 'Неизвестная ошибка'));
                     }

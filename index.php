@@ -53,33 +53,12 @@ if ($page) {
     $metaDescription = htmlspecialchars($page['meta_description'] ?? '');
     $pageContent = $page['content'];
 
-    // Переносим CTA "Готовы обсудить ваш проект?" сразу под hero-заголовок,
-    // если страница хранится в БД и блоки стоят иначе.
-    if (stripos($pageContent, 'Готовы обсудить ваш проект?') !== false && stripos($pageContent, 'Превращаем технологии') !== false) {
+    // CTA теперь вставляется глобально перед футером в templates/base.php.
+    // Если в контенте главной уже есть этот блок (из старых версий), удаляем,
+    // чтобы не было дублей и чтобы CTA был строго над футером.
+    if (stripos($pageContent, 'Готовы обсудить ваш проект?') !== false) {
         $ctaPattern = '/<section[^>]*>[\s\S]*?<h2[^>]*>\s*Готовы обсудить ваш проект\?\s*<\/h2>[\s\S]*?<\/section>/u';
-        if (preg_match($ctaPattern, $pageContent, $m)) {
-            $ctaBlock = $m[0];
-
-            // Обновляем цвет подложки CTA только ВНУТРИ рамки (если он размечен как bg-white)
-            $ctaBlock = str_replace(' w-full bg-white ', ' w-full bg-[#EDF95A] ', $ctaBlock);
-            $ctaBlock = str_replace(' w-full bg-white"', ' w-full bg-[#EDF95A]"', $ctaBlock);
-            // Убираем обводку у CTA (если она есть)
-            $ctaBlock = str_replace(' border border-black', '', $ctaBlock);
-            // Скругление контейнера CTA (внутри блока)
-            $ctaBlock = str_replace('relative w-full ', 'relative w-full rounded-2xl ', $ctaBlock);
-            // Убираем обводку у кнопки в CTA
-            $ctaBlock = str_replace('class="btn btn-arrow"', 'class="btn btn-arrow btn-noborder"', $ctaBlock);
-            $pageContent = preg_replace($ctaPattern, '', $pageContent, 1);
-
-            $heroPos = stripos($pageContent, 'Превращаем технологии');
-            if ($heroPos !== false) {
-                $closePos = strpos($pageContent, '</section>', $heroPos);
-                if ($closePos !== false) {
-                    $insertPos = $closePos + strlen('</section>');
-                    $pageContent = substr($pageContent, 0, $insertPos) . "\n\n" . $ctaBlock . "\n\n" . substr($pageContent, $insertPos);
-                }
-            }
-        }
+        $pageContent = preg_replace($ctaPattern, '', $pageContent, 1);
     }
     
     // Заменяем статический блок проектов на динамический

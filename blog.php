@@ -41,11 +41,88 @@ function renderBlogListHtml(array $posts): string {
     return (string)ob_get_clean();
 }
 
+$BLOG_PER_PAGE = 8;
+
+function buildPageUrl(int $page): string {
+    $basePath = parse_url($_SERVER['REQUEST_URI'] ?? '/blog.php', PHP_URL_PATH) ?: '/blog.php';
+    $params = $_GET ?? [];
+    $params['page'] = $page;
+    return $basePath . '?' . http_build_query($params);
+}
+
+function renderBlogPaginationHtml(int $currentPage, int $totalPages): string {
+    if ($totalPages <= 1) return '';
+
+    $currentPage = max(1, min($totalPages, $currentPage));
+
+    $items = [];
+    // Всегда показываем 1 и последнюю
+    $items[] = 1;
+    $items[] = $totalPages;
+
+    // Окно вокруг текущей
+    for ($p = $currentPage - 2; $p <= $currentPage + 2; $p++) {
+        if ($p >= 1 && $p <= $totalPages) $items[] = $p;
+    }
+
+    $items = array_values(array_unique($items));
+    sort($items);
+
+    ob_start();
+    ?>
+    <nav class="mt-10 flex justify-center" aria-label="Пагинация">
+        <div class="join">
+            <a class="btn btn-ghost join-item <?php echo $currentPage <= 1 ? 'btn-disabled' : ''; ?>"
+               href="<?php echo htmlspecialchars(buildPageUrl(max(1, $currentPage - 1))); ?>">
+                ←
+            </a>
+
+            <?php
+            $prev = null;
+            foreach ($items as $p):
+                if ($prev !== null && $p > $prev + 1): ?>
+                    <button class="btn btn-ghost join-item btn-disabled">…</button>
+                <?php endif; ?>
+
+                <a class="btn btn-ghost join-item <?php echo $p === $currentPage ? 'btn-active' : ''; ?>"
+                   href="<?php echo htmlspecialchars(buildPageUrl($p)); ?>">
+                    <?php echo (int)$p; ?>
+                </a>
+            <?php
+                $prev = $p;
+            endforeach; ?>
+
+            <a class="btn btn-ghost join-item <?php echo $currentPage >= $totalPages ? 'btn-disabled' : ''; ?>"
+               href="<?php echo htmlspecialchars(buildPageUrl(min($totalPages, $currentPage + 1))); ?>">
+                →
+            </a>
+        </div>
+    </nav>
+    <?php
+    return (string)ob_get_clean();
+}
+
 $slug = 'blog';
 $page = getPageBySlug($slug);
 
-$posts = $db->query("SELECT * FROM blog_posts ORDER BY display_order ASC, id DESC")->fetchAll();
-$blogListHtml = renderBlogListHtml($posts);
+$pageNum = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$perPage = $BLOG_PER_PAGE;
+$offset = ($pageNum - 1) * $perPage;
+
+$totalPosts = (int)$db->query("SELECT COUNT(*) FROM blog_posts")->fetchColumn();
+$totalPages = max(1, (int)ceil($totalPosts / $perPage));
+if ($pageNum > $totalPages) {
+    $pageNum = $totalPages;
+    $offset = ($pageNum - 1) * $perPage;
+}
+
+$stmt = $db->prepare("SELECT * FROM blog_posts ORDER BY display_order ASC, id DESC LIMIT :limit OFFSET :offset");
+$stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
+$posts = $stmt->fetchAll();
+
+$blogListHtml = renderBlogListHtml($posts) . renderBlogPaginationHtml($pageNum, $totalPages);
 
 if ($page) {
     $pageTitle = htmlspecialchars($page['title']);

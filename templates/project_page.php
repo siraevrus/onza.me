@@ -74,7 +74,9 @@
                 endforeach; 
                 ?>
             </div>
-            <p class="mt-3 max-w-3xl"><?php echo htmlspecialchars($project['description']); ?></p>
+            <div class="mt-3 max-w-3xl prose prose-lg max-w-none">
+                <?php echo $project['description']; ?>
+            </div>
 
             <?php
             $whatDoneRaw = trim((string)($project['what_done'] ?? ''));
@@ -169,6 +171,8 @@
             <?php endif; ?>
         </section>
     </main>
+
+    <?php include __DIR__ . '/cta.php'; ?>
 
     <footer class="bg-white">
         <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">

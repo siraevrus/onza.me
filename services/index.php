@@ -25,7 +25,6 @@ function renderServicesListHtml(array $services): string {
             <div class="card card-zoom">
                 <div class="card-body">
                     <h2 class="card-title"><?php echo htmlspecialchars($service['title']); ?></h2>
-                    <p><?php echo htmlspecialchars($service['subtitle']); ?></p>
                     <div class="mt-3">
                         <a href="/services/<?php echo htmlspecialchars($service['slug']); ?>.php" class="link link-hover">Подробнее ↗</a>
                     </div>
@@ -62,6 +61,11 @@ if ($page) {
     </nav>';
     
     $pageContent = $page['content'];
+
+    // Убираем блок "Нужен быстрый старт?" на корневой странице /services
+    // ВАЖНО: удаляем только секцию, где находится этот заголовок (не захватываем соседние секции).
+    $fastStartPattern = '/<section\\b[^>]*>(?:(?!<\\/section>).)*?<h2[^>]*>\\s*Нужен\\s+быстрый\\s+старт\\??\\s*<\\/h2>(?:(?!<\\/section>).)*?<\\/section>/uis';
+    $pageContent = preg_replace($fastStartPattern, '', $pageContent, 1);
     
     // Если в контенте есть плейсхолдер, заменяем
     if (strpos($pageContent, '<!--SERVICES_LIST-->') !== false) {
@@ -125,6 +129,26 @@ if ($page) {
         </section>';
                 // Ищем закрывающий тег первой секции и добавляем после неё
                 $html = preg_replace('/(<\/section>\s*)(<section[^>]*class="[^"]*bw-section[^"]*"[^>]*>)/s', '$1' . $servicesSection . "\n      " . '$2', $html, 1);
+            }
+        }
+
+        // Убираем блок "Нужен быстрый старт?" на корневой странице /services (в статическом HTML)
+        // ВАЖНО: удаляем только секцию, где находится этот заголовок (не захватываем соседние секции).
+        $fastStartPattern = '/<section\\b[^>]*>(?:(?!<\\/section>).)*?<h2[^>]*>\\s*Нужен\\s+быстрый\\s+старт\\??\\s*<\\/h2>(?:(?!<\\/section>).)*?<\\/section>/uis';
+        $html = preg_replace($fastStartPattern, '', $html, 1);
+
+        // Добавляем общий CTA "Готовы обсудить ваш проект?" над футером (если его ещё нет)
+        if (strpos($html, 'data-cta-wave') === false && stripos($html, 'Готовы обсудить ваш проект?') === false) {
+            ob_start();
+            include __DIR__ . '/../templates/cta.php';
+            $ctaHtml = (string)ob_get_clean();
+            if (stripos($html, '<footer') !== false) {
+                // Вставляем CTA ПЕРЕД футером
+                $html = preg_replace('/<footer\b/i', $ctaHtml . "\n<footer", $html, 1);
+            } elseif (stripos($html, '</body>') !== false) {
+                $html = preg_replace('/<\/body>/i', $ctaHtml . "\n</body>", $html, 1);
+            } else {
+                $html .= "\n" . $ctaHtml;
             }
         }
         

@@ -567,6 +567,12 @@ a.badge:hover {
 }
 
 /* Global link styles - remove underline on hover, change color to #E93032 */
+/* Пагинация блога - без обводки */
+nav[aria-label="Пагинация"] .join .btn {
+    border: none !important;
+}
+
+
 a:not(.btn):not(.badge):not(.header-glass a):hover {
   color: #E93032 !important;
   text-decoration: none !important;

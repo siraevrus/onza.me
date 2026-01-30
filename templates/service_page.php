@@ -59,16 +59,21 @@
         }
         
         if (is_array($blocks) && !empty($blocks)): 
+            $isFirstBlockWithBackground = true;
             foreach ($blocks as $block): 
                 $hasBackground = isset($block['has_background']) ? (int)$block['has_background'] : 0;
                 $blockTitle = htmlspecialchars($block['title'] ?? '');
                 $blockContent = $block['content'] ?? '';
                 
                 if ($hasBackground == 1): 
+                    // Для первого блока с подложкой: верхний отступ больше (48px), для остальных - добавляем margin-top 25px
+                    $paddingClass = $isFirstBlockWithBackground ? 'pt-12 pb-0' : 'pt-0 pb-0';
+                    $marginTop = $isFirstBlockWithBackground ? '' : 'style="margin-top: 25px;"';
+                    $isFirstBlockWithBackground = false;
         ?>
-                    <!-- Блок с подложкой (серый фон) -->
-                    <section class="bw-section">
-                        <div class="container mx-auto max-w-7xl px-4 py-12">
+                    <!-- Блок с подложкой (белая карточка) -->
+                    <section class="container mx-auto max-w-7xl px-4 <?php echo $paddingClass; ?>" <?php echo $marginTop; ?>>
+                        <div class="bg-white rounded-2xl border border-black/10 p-8 md:p-10">
                             <?php if (!empty($blockTitle)): ?>
                                 <h2 class="text-2xl font-bold mb-4"><?php echo $blockTitle; ?></h2>
                             <?php endif; ?>
@@ -93,6 +98,8 @@
         endif; 
         ?>
     </main>
+
+    <?php include __DIR__ . '/cta.php'; ?>
 
     <!-- Footer -->
     <footer class="bg-white">

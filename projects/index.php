@@ -141,18 +141,9 @@ $projects = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DE
         </div>
       </section>
 
-      <section class="bw-section">
-        <div class="container mx-auto max-w-7xl px-4 py-12">
-          <div class="border border-black px-6 py-8 flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div class="flex-1">
-              <h2 class="text-2xl font-bold">Хотите кейс по вашей отрасли?</h2>
-              <p class="mt-2">Подберём релевантные примеры и расскажем детали реализации.</p>
-            </div>
-            <a href="contacts.php" class="btn btn-primary btn-arrow">Запросить кейс</a>
-          </div>
-        </div>
-      </section>
     </main>
+
+    <?php include __DIR__ . '/../templates/cta.php'; ?>
 
     <footer class="bg-white">
       <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">

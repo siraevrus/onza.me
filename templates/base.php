@@ -37,6 +37,14 @@
         <?php echo $pageContent; ?>
     </main>
 
+    <?php
+    // Глобальный CTA перед футером (если он не вставлен в контент вручную)
+    $hasCtaInContent = isset($pageContent) && (stripos($pageContent, 'Готовы обсудить ваш проект?') !== false || strpos($pageContent, 'data-cta-wave') !== false);
+    if (!$hasCtaInContent) {
+        include __DIR__ . '/cta.php';
+    }
+    ?>
+
     <!-- Footer -->
     <footer class="bg-white">
         <div class="container mx-auto max-w-7xl px-4 py-10 grid gap-6 md:grid-cols-4 items-start">

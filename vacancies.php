@@ -86,6 +86,20 @@ if ($page) {
             // если плейсхолдера нет, просто добавим в конец <main>
             $html = preg_replace('/<\/main>/i', $vacanciesHtml . "\n</main>", $html, 1);
         }
+
+        // Добавляем общий CTA "Готовы обсудить ваш проект?" над футером (если его ещё нет)
+        if (strpos($html, 'data-cta-wave') === false && stripos($html, 'Готовы обсудить ваш проект?') === false) {
+            ob_start();
+            include __DIR__ . '/templates/cta.php';
+            $ctaHtml = (string)ob_get_clean();
+            if (stripos($html, '<footer') !== false) {
+                $html = preg_replace('/<footer\b/i', $ctaHtml . "\n<footer", $html, 1);
+            } elseif (stripos($html, '</body>') !== false) {
+                $html = preg_replace('/<\/body>/i', $ctaHtml . "\n</body>", $html, 1);
+            } else {
+                $html .= "\n" . $ctaHtml;
+            }
+        }
         echo $html;
     } else {
         http_response_code(404);
